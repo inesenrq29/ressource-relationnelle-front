@@ -1,59 +1,106 @@
-# RessourceRelationnelle
-
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.4.
-
-## Development server
-
-To start a local development server, run:
-
+# Ressource Relationnelle
+## Prérequis
+- Avoir Node d'installé
+Pour vérifier si Node est installé taper ceci:
 ```bash
-ng serve
+node -v
+mpn -v
+```
+Si aucune version ne s'affiche, cela signifie que Node n'est pas installé
+Pour le télécharger:
+Aller sur le site officiel:
+https://nodejs.org et cliquer sur LTS
+
+## Installation d'Angular:
+Taper ces commandes dans le terminal:
+```bash
+npm install -g @angular/cli
+ng version
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
+## Création du projet Ressource Relationnelle
+ng new <nom-projet> ici:
 ```bash
-ng generate component component-name
+ng new ressource-relationnelle
+```
+Routing: non
+Style: CSS pour le moment, la configuration sera peut-être à changer plus tard
+IA: None
+
+### Accès au projet
+cd <mon-projet> c'est-à-dire ici
+```bash
+cd ressource-relationnelle
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
+### Lancement du projet
 ```bash
-ng generate --help
+ng serve 
 ```
 
-## Building
-
-To build the project run:
-
+## Ajout de Lint
+Le linting permet :
+- de détecter les erreurs dans le code TypeScript/HTML
+- d’appliquer des règles de bonnes pratiques
+- d’assurer une qualité de code homogène dans le projet
+- de prévenir les bugs avant l’exécution ou la mise en production
+Pour l'ajouter, taper cette commande:
 ```bash
-ng build
+ng add @angular-eslint/schematics
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+### Lancement du Lint
+```bash
+ng lint
+```
+### Correction automatique de certaines erreurs
+```bash
+ng lint --fix
+```
+## Ajout de Prettier
+Permet de formatter le code
 
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+### Installation de Prettier
 
 ```bash
-ng test
+npm install --save-dev prettier
 ```
 
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
+### Installation des intégrations ESLint
 
 ```bash
-ng e2e
+npm install --save-dev eslint-config-prettier eslint-plugin-prettier
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+### Ajout de la configuration Prettier (optionnel) :
+- Vous pouvez mettre des options dans `package.json` sous la clé `prettier`, ou créer un fichier `.prettierrc`
 
-## Additional Resources
+### Ignorer les fichiers générés en créant `.prettierignore` 
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+```
+node_modules/
+dist/
+build/
+.angular/
+coverage/
+```
+
+### Ajout des scripts dans `package.json` pour formater et vérifier
+
+```json
+"scripts": {
+	"format": "prettier --write \"src/**/*.{ts,html,css,scss,js,json,md}\"",
+	"format:check": "prettier --check \"src/**/*.{ts,html,css,scss,js,json,md}\""
+}
+```
+
+### Intégration avec ESLint
+Ajouter `"plugin:prettier/recommended"` dans les `extends` d'`eslint.config.js` pour que Prettier et ESLint coopèrent
+
+### Exécution de Prettier
+
+```bash
+npm run format
+npm run format:check
+```
+
