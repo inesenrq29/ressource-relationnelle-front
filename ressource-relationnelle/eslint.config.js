@@ -12,6 +12,7 @@ module.exports = defineConfig([
       tseslint.configs.recommended,
       tseslint.configs.stylistic,
       angular.configs.tsRecommended,
+      "plugin:prettier/recommended",
     ],
     processor: angular.processInlineTemplates,
     rules: {
@@ -38,6 +39,7 @@ module.exports = defineConfig([
     extends: [
       angular.configs.templateRecommended,
       angular.configs.templateAccessibility,
+      "plugin:prettier/recommended",
     ],
     rules: {},
   }
