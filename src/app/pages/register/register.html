@@ -1,1 +1,81 @@
-<p>register works!</p>
+<div class="auth-page">
+  <h1>Inscription</h1>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <div>
+      <label for="email">Email</label>
+      <input id="email" type="email" formControlName="email" />
+      <div *ngIf="email.touched && email.invalid">
+        <small *ngIf="email.errors?.['required']">L’email est obligatoire.</small>
+        <small *ngIf="email.errors?.['email']">Format d’email invalide.</small>
+        <small *ngIf="email.errors?.['maxlength']">254 caractères maximum.</small>
+      </div>
+    </div>
+
+    <div>
+      <label for="pseudo">Pseudo</label>
+      <input id="pseudo" type="text" formControlName="pseudo" />
+      <div *ngIf="pseudo.touched && pseudo.invalid">
+        <small *ngIf="pseudo.errors?.['required']">Le pseudo est obligatoire.</small>
+        <small *ngIf="pseudo.errors?.['minlength']">3 caractères minimum.</small>
+        <small *ngIf="pseudo.errors?.['maxlength']">100 caractères maximum.</small>
+      </div>
+    </div>
+
+    <div>
+      <label for="password">Mot de passe</label>
+      <input id="password" type="password" formControlName="password" />
+      <div *ngIf="password.touched && password.invalid">
+        <small *ngIf="password.errors?.['required']">Le mot de passe est obligatoire.</small>
+        <small *ngIf="password.errors?.['minlength']">8 caractères minimum.</small>
+        <small *ngIf="password.errors?.['maxlength']">255 caractères maximum.</small>
+      </div>
+    </div>
+
+    <div>
+      <label for="confirmPassword">Confirmer le mot de passe</label>
+      <input id="confirmPassword" type="password" formControlName="confirmPassword" />
+      <div *ngIf="confirmPassword.touched && confirmPassword.invalid">
+        <small *ngIf="confirmPassword.errors?.['required']"
+        >La confirmation est obligatoire.</small
+        >
+      </div>
+      <div *ngIf="form.touched && form.errors?.['passwordMismatch']">
+        <small>Les mots de passe ne correspondent pas.</small>
+      </div>
+    </div>
+
+    <div>
+      <label>
+        <input type="checkbox" formControlName="areTermsAccepted" />
+        J’accepte les conditions d’utilisation
+      </label>
+      <div *ngIf="areTermsAccepted.touched && areTermsAccepted.invalid">
+        <small>Les conditions doivent être acceptées.</small>
+      </div>
+    </div>
+
+    <div>
+      <label>
+        <input type="checkbox" formControlName="isPrivacyPolicyAccepted" />
+        J’accepte la politique de confidentialité
+      </label>
+      <div *ngIf="isPrivacyPolicyAccepted.touched && isPrivacyPolicyAccepted.invalid">
+        <small>La politique de confidentialité doit être acceptée.</small>
+      </div>
+    </div>
+
+    <div *ngIf="errorMessage">
+      <small>{{ errorMessage }}</small>
+    </div>
+
+    <button type="submit" [disabled]="loading">
+      {{ loading ? 'Inscription...' : 'Créer un compte' }}
+    </button>
+  </form>
+
+  <p>
+    Déjà un compte ?
+    <a routerLink="/login">Se connecter</a>
+  </p>
+</div>

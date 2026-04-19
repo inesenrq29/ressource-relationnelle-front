@@ -1,1 +1,38 @@
-<p>login works!</p>
+<div class="auth-page">
+  <h1>Connexion</h1>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <div>
+      <label for="email">Email</label>
+      <input id="email" type="email" formControlName="email" />
+      <div *ngIf="email.touched && email.invalid">
+        <small *ngIf="email.errors?.['required']">L’email est obligatoire.</small>
+        <small *ngIf="email.errors?.['email']">Format d’email invalide.</small>
+        <small *ngIf="email.errors?.['maxlength']">254 caractères maximum.</small>
+      </div>
+    </div>
+
+    <div>
+      <label for="password">Mot de passe</label>
+      <input id="password" type="password" formControlName="password" />
+      <div *ngIf="password.touched && password.invalid">
+        <small *ngIf="password.errors?.['required']">Le mot de passe est obligatoire.</small>
+        <small *ngIf="password.errors?.['minlength']">8 caractères minimum.</small>
+        <small *ngIf="password.errors?.['maxlength']">255 caractères maximum.</small>
+      </div>
+    </div>
+
+    <div *ngIf="errorMessage">
+      <small>{{ errorMessage }}</small>
+    </div>
+
+    <button type="submit" [disabled]="loading">
+      {{ loading ? 'Connexion...' : 'Se connecter' }}
+    </button>
+  </form>
+
+  <p>
+    Pas encore de compte ?
+    <a routerLink="/register">Créer un compte</a>
+  </p>
+</div>

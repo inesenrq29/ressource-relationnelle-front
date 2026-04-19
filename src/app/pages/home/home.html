@@ -1,1 +1,21 @@
-<p>home works!</p>
+<div class="home-page">
+  <h1>Bienvenue sur Ressource Relationnelle</h1>
+  <p>
+    Une plateforme dédiée au partage de ressources et d’outils autour des relations humaines.
+  </p>
+
+  <div *ngIf="!user; else connectedBlock">
+
+    <a routerLink="/login">Se connecter</a>
+    <span> | </span>
+    <a routerLink="/register">Créer un compte</a>
+  </div>
+
+  <ng-template #connectedBlock>
+    <p>Bonjour {{ user?.pseudo }}, vous êtes connecté(e).</p>
+
+    <a routerLink="/home">Accueil</a>
+    <span> | </span>
+    <button type="button" (click)="logout()">Se déconnecter</button>
+  </ng-template>
+</div>
