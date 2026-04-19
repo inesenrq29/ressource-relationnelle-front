@@ -39,11 +39,23 @@
     "@angular/build": "^21.0.4",
     "@angular/cli": "^21.0.4",
     "@angular/compiler-cli": "^21.0.0",
-    "angular-eslint": "21.1.0",
-    "eslint": "^9.39.1",
+    "@eslint/js": "^10.0.1",
+    "angular-eslint": "21.3.1",
+    "eslint": "^10.0.3",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.5",
     "jsdom": "^27.1.0",
+    "prettier": "^3.8.3",
     "typescript": "~5.9.2",
-    "typescript-eslint": "8.47.0",
+    "typescript-eslint": "8.56.1",
     "vitest": "^4.0.8"
+  },
+  "scripts": {
+    "start": "ng serve --proxy-config proxy.conf.json",
+    "build": "ng build",
+    "lint": "ng lint",
+    "lint:fix": "ng lint --fix",
+    "format": "prettier --write \"src/**/*.{ts,html,css,scss,js,json,md}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,html,css,scss,js,json,md}\""
   }
 }
