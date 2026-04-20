@@ -46,22 +46,35 @@ export class RegisterComponent {
   );
 
   submit(): void {
+    console.log('submit appelé');
+    console.log('valid', this.form.valid);
+    console.log('form errors', this.form.errors);
+    console.log('value', this.form.getRawValue());
+
+    Object.entries(this.form.controls).forEach(([name, control]) => {
+      console.log(name, control.value, control.valid, control.errors);
+    });
+
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      console.log('bloqué car invalide');
       return;
     }
 
     this.loading = true;
     this.errorMessage = '';
 
+    console.log('appel API');
     this.authService.register(this.form.getRawValue()).subscribe({
-      next: () => {
+      next: (res) => {
+        console.log('OK', res);
         this.loading = false;
         this.router.navigateByUrl('/home');
       },
-      error: (error) => {
+      error: (err) => {
+        console.error('ERR', err);
         this.loading = false;
-        this.errorMessage = this.authService.getErrorMessage(error);
+        this.errorMessage = this.authService.getErrorMessage(err);
       },
     });
   }
