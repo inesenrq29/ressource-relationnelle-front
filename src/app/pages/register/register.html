@@ -1,81 +1,150 @@
-<div class="auth-page">
-  <h1>Inscription</h1>
+<div class="auth-shell">
+  <section class="auth-visual">
+    <a routerLink="/home" class="brand-badge">Ressource Relationnelle</a>
 
-  <form [formGroup]="form" (ngSubmit)="submit()">
-    <div>
-      <label for="email">Email</label>
-      <input id="email" type="email" formControlName="email" />
-      <div *ngIf="email.touched && email.invalid">
-        <small *ngIf="email.errors?.['required']">L’email est obligatoire.</small>
-        <small *ngIf="email.errors?.['email']">Format d’email invalide.</small>
-        <small *ngIf="email.errors?.['maxlength']">254 caractères maximum.</small>
-      </div>
+    <div class="auth-visual__content">
+      <p class="auth-kicker">Créer son espace</p>
+      <h1>Rejoins une plateforme pensée pour enrichir les liens du quotidien.</h1>
+      <p class="auth-description">
+        Inscris-toi pour accéder à un univers de ressources, de partages et d’outils autour des
+        relations humaines.
+      </p>
     </div>
 
-    <div>
-      <label for="pseudo">Pseudo</label>
-      <input id="pseudo" type="text" formControlName="pseudo" />
-      <div *ngIf="pseudo.touched && pseudo.invalid">
-        <small *ngIf="pseudo.errors?.['required']">Le pseudo est obligatoire.</small>
-        <small *ngIf="pseudo.errors?.['minlength']">3 caractères minimum.</small>
-        <small *ngIf="pseudo.errors?.['maxlength']">100 caractères maximum.</small>
-      </div>
+    <div class="auth-visual__footer">
     </div>
+  </section>
 
-    <div>
-      <label for="password">Mot de passe</label>
-      <input id="password" type="password" formControlName="password" />
-      <div *ngIf="password.touched && password.invalid">
-        <small *ngIf="password.errors?.['required']">Le mot de passe est obligatoire.</small>
-        <small *ngIf="password.errors?.['minlength']">8 caractères minimum.</small>
-        <small *ngIf="password.errors?.['maxlength']">255 caractères maximum.</small>
+  <section class="auth-card">
+    <p class="auth-card__eyebrow">Inscription</p>
+    <h2>Créer un compte</h2>
+    <p class="auth-card__subtitle">
+      Quelques informations suffisent pour commencer ton expérience sur la plateforme.
+    </p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form" novalidate>
+      <div class="form-row">
+        <div class="field">
+          <label for="email">Adresse email</label>
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            placeholder="exemple@email.com"
+          />
+          <small class="field-error" *ngIf="email.touched && email.errors?.['required']">
+            L’email est obligatoire.
+          </small>
+          <small class="field-error" *ngIf="email.touched && email.errors?.['email']">
+            Format d’email invalide.
+          </small>
+          <small class="field-error" *ngIf="email.touched && email.errors?.['maxlength']">
+            254 caractères maximum.
+          </small>
+        </div>
+
+        <div class="field">
+          <label for="pseudo">Pseudo</label>
+          <input id="pseudo" type="text" formControlName="pseudo" placeholder="Ton pseudo" />
+          <small class="field-error" *ngIf="pseudo.touched && pseudo.errors?.['required']">
+            Le pseudo est obligatoire.
+          </small>
+          <small class="field-error" *ngIf="pseudo.touched && pseudo.errors?.['minlength']">
+            3 caractères minimum.
+          </small>
+          <small class="field-error" *ngIf="pseudo.touched && pseudo.errors?.['maxlength']">
+            100 caractères maximum.
+          </small>
+        </div>
       </div>
-    </div>
 
-    <div>
-      <label for="confirmPassword">Confirmer le mot de passe</label>
-      <input id="confirmPassword" type="password" formControlName="confirmPassword" />
-      <div *ngIf="confirmPassword.touched && confirmPassword.invalid">
-        <small *ngIf="confirmPassword.errors?.['required']"
-        >La confirmation est obligatoire.</small
-        >
+      <div class="form-row">
+        <div class="field">
+          <label for="password">Mot de passe</label>
+          <input
+            id="password"
+            type="password"
+            formControlName="password"
+            placeholder="Minimum 8 caractères"
+          />
+          <small class="field-error" *ngIf="password.touched && password.errors?.['required']">
+            Le mot de passe est obligatoire.
+          </small>
+          <small class="field-error" *ngIf="password.touched && password.errors?.['minlength']">
+            8 caractères minimum.
+          </small>
+          <small class="field-error" *ngIf="password.touched && password.errors?.['maxlength']">
+            255 caractères maximum.
+          </small>
+        </div>
+
+        <div class="field">
+          <label for="confirmPassword">Confirmation</label>
+          <input
+            id="confirmPassword"
+            type="password"
+            formControlName="confirmPassword"
+            placeholder="Confirme ton mot de passe"
+          />
+          <small
+            class="field-error"
+            *ngIf="confirmPassword.touched && confirmPassword.errors?.['required']"
+          >
+            La confirmation est obligatoire.
+          </small>
+        </div>
       </div>
-      <div *ngIf="form.touched && form.errors?.['passwordMismatch']">
-        <small>Les mots de passe ne correspondent pas.</small>
+
+      <small class="field-error" *ngIf="form.touched && form.errors?.['passwordMismatch']">
+        Les mots de passe ne correspondent pas.
+      </small>
+
+      <div class="check-grid">
+        <label class="check-card">
+          <input type="checkbox" formControlName="areTermsAccepted" />
+          <span>
+            <strong>Conditions d’utilisation</strong>
+            J’accepte les conditions d’utilisation de la plateforme.
+          </span>
+        </label>
+
+        <label class="check-card">
+          <input type="checkbox" formControlName="isPrivacyPolicyAccepted" />
+          <span>
+            <strong>Politique de confidentialité</strong>
+            J’accepte la politique de confidentialité et le traitement de mes données.
+          </span>
+        </label>
       </div>
-    </div>
 
-    <div>
-      <label>
-        <input type="checkbox" formControlName="areTermsAccepted" />
-        J’accepte les conditions d’utilisation
-      </label>
-      <div *ngIf="areTermsAccepted.touched && areTermsAccepted.invalid">
-        <small>Les conditions doivent être acceptées.</small>
+      <small
+        class="field-error"
+        *ngIf="areTermsAccepted.touched && areTermsAccepted.errors?.['required']"
+      >
+        Les conditions d’utilisation doivent être acceptées.
+      </small>
+
+      <small
+        class="field-error"
+        *ngIf="
+          isPrivacyPolicyAccepted.touched && isPrivacyPolicyAccepted.errors?.['required']
+        "
+      >
+        La politique de confidentialité doit être acceptée.
+      </small>
+
+      <div class="alert-error" *ngIf="errorMessage">
+        {{ errorMessage }}
       </div>
-    </div>
 
-    <div>
-      <label>
-        <input type="checkbox" formControlName="isPrivacyPolicyAccepted" />
-        J’accepte la politique de confidentialité
-      </label>
-      <div *ngIf="isPrivacyPolicyAccepted.touched && isPrivacyPolicyAccepted.invalid">
-        <small>La politique de confidentialité doit être acceptée.</small>
-      </div>
-    </div>
+      <button class="primary-btn" type="submit" [disabled]="loading || form.invalid">
+        {{ loading ? 'Inscription en cours...' : 'Créer mon compte' }}
+      </button>
+    </form>
 
-    <div *ngIf="errorMessage">
-      <small>{{ errorMessage }}</small>
-    </div>
-
-    <button type="submit" [disabled]="loading">
-      {{ loading ? 'Inscription...' : 'Créer un compte' }}
-    </button>
-  </form>
-
-  <p>
-    Déjà un compte ?
-    <a routerLink="/login">Se connecter</a>
-  </p>
+    <p class="auth-switch">
+      Déjà un compte ?
+      <a routerLink="/login">Se connecter</a>
+    </p>
+  </section>
 </div>

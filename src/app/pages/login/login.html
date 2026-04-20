@@ -1,38 +1,105 @@
-<div class="auth-page">
-  <h1>Connexion</h1>
+<div class="auth-shell">
+  <section class="auth-visual" aria-label="Présentation de la plateforme">
+    <a routerLink="/home" class="brand-badge">Ressource Relationnelle</a>
 
-  <form [formGroup]="form" (ngSubmit)="submit()">
-    <div>
-      <label for="email">Email</label>
-      <input id="email" type="email" formControlName="email" />
-      <div *ngIf="email.touched && email.invalid">
-        <small *ngIf="email.errors?.['required']">L’email est obligatoire.</small>
-        <small *ngIf="email.errors?.['email']">Format d’email invalide.</small>
-        <small *ngIf="email.errors?.['maxlength']">254 caractères maximum.</small>
+    <div class="auth-visual__content">
+      <p class="auth-kicker">Prends soin de toi à travers les autres</p>
+      <h1>Reconnecte-toi à un espace pensé pour la relation et le partage.</h1>
+      <p class="auth-description">
+        Une plateforme conçue pour t’aider à découvrir, conserver et partager des ressources
+        autour de la qualité des liens relationnels et du mieux-être.
+      </p>
+    </div>
+
+    <div class="auth-visual__footer" aria-hidden="true"></div>
+  </section>
+
+  <section class="auth-card" aria-labelledby="login-title">
+    <p class="auth-card__eyebrow">Connexion</p>
+    <h2 id="login-title">Bon retour</h2>
+    <p class="auth-card__subtitle">
+      Connecte-toi pour retrouver tes ressources, tes favoris et ton espace personnel.
+    </p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form" novalidate>
+      <div class="field">
+        <label for="email">Adresse email</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          inputmode="email"
+          autocomplete="email"
+          placeholder="exemple@email.com"
+          [attr.aria-invalid]="email.invalid && email.touched ? 'true' : 'false'"
+          [attr.aria-describedby]="email.touched && email.invalid ? 'email-errors' : null"
+        />
+
+        <div
+          id="email-errors"
+          class="field-messages"
+          *ngIf="email.touched && email.invalid"
+          aria-live="polite"
+        >
+          <small class="field-error" *ngIf="email.errors?.['required']">
+            L’adresse email est obligatoire.
+          </small>
+          <small class="field-error" *ngIf="email.errors?.['email']">
+            Le format de l’adresse email est invalide.
+          </small>
+          <small class="field-error" *ngIf="email.errors?.['maxlength']">
+            L’adresse email ne doit pas dépasser 254 caractères.
+          </small>
+        </div>
       </div>
-    </div>
 
-    <div>
-      <label for="password">Mot de passe</label>
-      <input id="password" type="password" formControlName="password" />
-      <div *ngIf="password.touched && password.invalid">
-        <small *ngIf="password.errors?.['required']">Le mot de passe est obligatoire.</small>
-        <small *ngIf="password.errors?.['minlength']">8 caractères minimum.</small>
-        <small *ngIf="password.errors?.['maxlength']">255 caractères maximum.</small>
+      <div class="field">
+        <label for="password">Mot de passe</label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          autocomplete="current-password"
+          placeholder="Minimum 8 caractères"
+          [attr.aria-invalid]="password.invalid && password.touched ? 'true' : 'false'"
+          [attr.aria-describedby]="password.touched && password.invalid ? 'password-errors' : null"
+        />
+
+        <div
+          id="password-errors"
+          class="field-messages"
+          *ngIf="password.touched && password.invalid"
+          aria-live="polite"
+        >
+          <small class="field-error" *ngIf="password.errors?.['required']">
+            Le mot de passe est obligatoire.
+          </small>
+          <small class="field-error" *ngIf="password.errors?.['minlength']">
+            Le mot de passe doit contenir au moins 8 caractères.
+          </small>
+          <small class="field-error" *ngIf="password.errors?.['maxlength']">
+            Le mot de passe ne doit pas dépasser 255 caractères.
+          </small>
+        </div>
       </div>
-    </div>
 
-    <div *ngIf="errorMessage">
-      <small>{{ errorMessage }}</small>
-    </div>
+      <div
+        class="alert-error"
+        *ngIf="errorMessage"
+        role="alert"
+        aria-live="assertive"
+      >
+        {{ errorMessage }}
+      </div>
 
-    <button type="submit" [disabled]="loading">
-      {{ loading ? 'Connexion...' : 'Se connecter' }}
-    </button>
-  </form>
+      <button class="primary-btn" type="submit" [disabled]="loading || form.invalid">
+        {{ loading ? 'Connexion en cours…' : 'Se connecter' }}
+      </button>
+    </form>
 
-  <p>
-    Pas encore de compte ?
-    <a routerLink="/register">Créer un compte</a>
-  </p>
+    <p class="auth-switch">
+      Pas encore de compte ?
+      <a routerLink="/register">Créer un compte</a>
+    </p>
+  </section>
 </div>
