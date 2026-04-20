@@ -1,0 +1,68 @@
+.rr-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  height: 78px;
+  padding: 0 1.5rem;
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(2, 48, 71, 0.08);
+  box-shadow: 0 10px 30px rgba(2, 48, 71, 0.06);
+}
+
+.rr-navbar__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  cursor: pointer;
+}
+
+.rr-navbar__logo {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #023047, #219ebc);
+  color: white;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.rr-navbar__title {
+  color: #023047;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.rr-navbar__spacer {
+  flex: 1;
+}
+
+.rr-navbar__links {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.rr-navbar__links a[mat-button] {
+  color: #023047;
+  font-weight: 600;
+}
+
+.rr-navbar__cta {
+  margin-left: 0.5rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #023047, #219ebc) !important;
+  color: white !important;
+}
+
+@media (max-width: 900px) {
+  .rr-navbar__title {
+    display: none;
+  }
+
+  .rr-navbar__links a[mat-button] {
+    display: none;
+  }
+}

@@ -1,21 +1,60 @@
-<div class="home-page">
-  <h1>Bienvenue sur Ressource Relationnelle</h1>
-  <p>
-    Une plateforme dédiée au partage de ressources et d’outils autour des relations humaines.
-  </p>
+<app-navbar></app-navbar>
 
-  <div *ngIf="!user; else connectedBlock">
+<div class="home-shell">
+  <section class="hero-section">
+    <div class="hero-main-card">
+      <p class="hero-kicker">Prends soin de tes liens</p>
+      <h1>Des ressources pensées pour nourrir la relation, le partage et le mieux-être.</h1>
+      <p class="hero-description">
+        Explore des contenus utiles, humains et accessibles pour mieux comprendre tes relations,
+        découvrir de nouvelles pratiques et avancer à ton rythme.
+      </p>
 
-    <a routerLink="/login">Se connecter</a>
-    <span> | </span>
-    <a routerLink="/register">Créer un compte</a>
-  </div>
+      <div class="hero-actions">
+        <button mat-raised-button class="hero-primary">Découvrir les ressources</button>
+        <button mat-stroked-button class="hero-secondary">En savoir plus</button>
+      </div>
+    </div>
 
-  <ng-template #connectedBlock>
-    <p>Bonjour {{ user?.pseudo }}, vous êtes connecté(e).</p>
+    <div class="hero-side-column">
+      <div class="hero-side-card hero-side-card--highlight">
+        <span class="hero-side-card__label">Ressources disponibles</span>
+        <strong>6 formats principaux</strong>
+        <p>Articles, vidéos, activités, PDF, images et audio.</p>
+      </div>
 
-    <a routerLink="/home">Accueil</a>
-    <span> | </span>
-    <button type="button" (click)="logout()">Se déconnecter</button>
-  </ng-template>
+      <div class="hero-side-card">
+        <span class="hero-side-card__label">Expérience</span>
+        <strong>Simple, douce, intuitive</strong>
+        <p>Une plateforme pensée pour découvrir, conserver et partager.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="resource-section">
+    <div class="section-heading">
+      <p class="section-kicker">Explorer</p>
+      <h2>Types de ressources</h2>
+      <p>
+        Retrouve les principaux formats de contenus disponibles sur la plateforme.
+      </p>
+    </div>
+
+    <div class="resource-grid">
+      <mat-card class="resource-card" *ngFor="let resource of resourceTypes">
+        <div class="resource-card__top">
+          <div class="resource-card__icon">
+            <mat-icon>{{ resource.icon }}</mat-icon>
+          </div>
+        </div>
+
+        <div class="resource-card__body">
+          <h3>{{ resource.title }}</h3>
+          <p>{{ resource.description }}</p>
+        </div>
+
+        <button mat-button class="resource-card__link">Accéder</button>
+      </mat-card>
+    </div>
+  </section>
 </div>
