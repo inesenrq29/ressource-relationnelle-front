@@ -1,60 +1,102 @@
 <app-navbar></app-navbar>
 
-<div class="home-shell">
-  <section class="hero-section">
-    <div class="hero-main-card">
-      <p class="hero-kicker">Prends soin de tes liens</p>
-      <h1>Des ressources pensées pour nourrir la relation, le partage et le mieux-être.</h1>
-      <p class="hero-description">
-        Explore des contenus utiles, humains et accessibles pour mieux comprendre tes relations,
-        découvrir de nouvelles pratiques et avancer à ton rythme.
-      </p>
+<main class="landing-page" aria-label="Accueil">
+  <section class="hero" #revealBlock>
+    <div class="hero__content">
+      <p class="eyebrow">Prends soin de toi à travers tes relations </p>
 
-      <div class="hero-actions">
-        <button mat-raised-button class="hero-primary">Découvrir les ressources</button>
-        <button mat-stroked-button class="hero-secondary">En savoir plus</button>
+      <h1>Des ressources qui préservent les relations, le partage et le bien-être</h1>
+
+      <p class="hero__description">
+        Explore des contenus utiles, humains et accessibles pour mieux te comprendre, comprendre tes relations et découvrir de nouvelles pratiques.</p>
+
+      <div class="hero__actions">
+        <button mat-raised-button class="btn-primary" type="button">
+          Découvrir les ressources
+        </button>
+
+        <button mat-stroked-button class="btn-secondary" type="button">
+          En savoir plus
+        </button>
       </div>
+
+      <ul class="hero__highlights" aria-label="Points clés">
+        <li>Tu pourras découvrir des contenus variés</li>
+        <li>Conserver les ressources utiles</li>
+        <li>Partager du contenu avec tes relations</li>
+      </ul>
     </div>
-
-    <div class="hero-side-column">
-      <div class="hero-side-card hero-side-card--highlight">
-        <span class="hero-side-card__label">Ressources disponibles</span>
-        <strong>6 formats principaux</strong>
-        <p>Articles, vidéos, activités, PDF, images et audio.</p>
+    <aside class="hero__panel" aria-label="Aperçu de la plateforme">
+      <span></span>
+      <div class="hero-card hero-card--accent">
+        <span class="hero-card__label">Expérience</span>
+        <strong>Simple et intuitive</strong>
+        <p>
+          Une plateforme pensée pour découvrir, conserver et partager des ressources autour des liens relationnels.</p>
       </div>
 
-      <div class="hero-side-card">
-        <span class="hero-side-card__label">Expérience</span>
-        <strong>Simple, douce, intuitive</strong>
-        <p>Une plateforme pensée pour découvrir, conserver et partager.</p>
+      <div class="hero-stats">
+        <div class="hero-card">
+          <span class="hero-card__label">Format de ressources disponibles</span>
+          <strong>6 formats disponibles pour l'instant ! </strong>
+        </div>
+
+        <div class="hero-card">
+          <span class="hero-card__label">Types de ressources disponibles</span>
+          <strong>Articles, vidéos, PDF...</strong>
+        </div>
+      </div>
+
+
+        <span></span>
+    </aside>
+  </section>
+
+  <section class="content-strip" aria-label="Formats disponibles" #revealBlock>
+    <div class="content-strip__inner">
+      <p class="content-strip__title">Formats de contenu</p>
+
+      <div class="content-strip__track" role="list">
+        <span class="content-pill" role="listitem" *ngFor="let contentType of contentTypes">
+          {{ contentType }}
+        </span>
       </div>
     </div>
   </section>
 
-  <section class="resource-section">
-    <div class="section-heading">
-      <p class="section-kicker">Explorer</p>
-      <h2>Types de ressources</h2>
+  <section class="content-section" #revealBlock>
+    <div class="section-intro">
+      <p class="eyebrow">Explorer</p>
+      <h2>Des types de contenu pensés pour différents usages</h2>
       <p>
-        Retrouve les principaux formats de contenus disponibles sur la plateforme.
+        Chaque format répond à une manière différente d’apprendre, de réfléchir, de pratiquer ou
+        de revenir plus tard sur une ressource.
       </p>
     </div>
 
     <div class="resource-grid">
-      <mat-card class="resource-card" *ngFor="let resource of resourceTypes">
+      <mat-card class="resource-card" *ngFor="let resource of resourceTypes; let i = index">
         <div class="resource-card__top">
-          <div class="resource-card__icon">
+          <div class="resource-card__icon" aria-hidden="true">
             <mat-icon>{{ resource.icon }}</mat-icon>
           </div>
+
+          <span class="resource-card__tag">{{ resource.tag }}</span>
         </div>
 
         <div class="resource-card__body">
           <h3>{{ resource.title }}</h3>
           <p>{{ resource.description }}</p>
+
+          <ul class="resource-card__list">
+            <li *ngFor="let point of resource.points">{{ point }}</li>
+          </ul>
         </div>
 
-        <button mat-button class="resource-card__link">Accéder</button>
+        <button mat-button class="resource-card__link" type="button">
+          Accéder
+        </button>
       </mat-card>
     </div>
   </section>
-</div>
+</main>
