@@ -17,7 +17,12 @@ export class SessionService {
   private readonly _user = signal<SessionUser | null>(this.initialUser);
 
   readonly user = this._user.asReadonly();
-  readonly isLoggedIn = computed(() => this._user() !== null);
+  readonly isLoggedIn = computed(() => {
+    const user = this._user();
+    const token = localStorage.getItem(this.storageTokenKey);
+
+    return !!user && !!token;
+  });
 
   setSession(user: SessionUser, token?: string): void {
     this._user.set(user);
