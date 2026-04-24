@@ -1,0 +1,28 @@
+<section class="category-page">
+  <div class="category-page__intro">
+    <p class="category-page__eyebrow">Les ressources</p>
+    <h1>Ajouter une catégorie</h1>
+    <p>Crée une nouvelle catégorie pour organiser les ressources.</p>
+  </div>
+
+  <mat-card class="category-card">
+    <form [formGroup]="form" (ngSubmit)="submit()" class="category-form">
+      <mat-form-field appearance="outline">
+        <mat-label>Nom de la catégorie</mat-label>
+        <input matInput formControlName="name" placeholder="Ex : Communication" />
+        <mat-error *ngIf="name.invalid && name.touched">
+          Le nom est requis.
+        </mat-error>
+      </mat-form-field>
+
+      <div class="category-feedback" *ngIf="errorMessage || successMessage">
+        <p class="category-feedback__error" *ngIf="errorMessage">{{ errorMessage }}</p>
+        <p class="category-feedback__success" *ngIf="successMessage">{{ successMessage }}</p>
+      </div>
+
+      <button mat-raised-button class="category-submit-btn" type="submit" [disabled]="loading">
+        {{ loading ? 'Ajout en cours...' : 'Ajouter la catégorie' }}
+      </button>
+    </form>
+  </mat-card>
+</section>

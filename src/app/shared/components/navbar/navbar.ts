@@ -3,6 +3,8 @@ import { Component, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatIconModule } from '@angular/material/icon';
 import { SessionService } from '../../../core/services/session.service';
 
 @Component({
@@ -13,7 +15,9 @@ import { SessionService } from '../../../core/services/session.service';
     RouterLink,
     RouterLinkActive,
     MatToolbarModule,
-    MatButtonModule
+    MatButtonModule,
+    MatMenuModule,
+    MatIconModule
   ],
   templateUrl: './navbar.html',
   styleUrl: './navbar.css'

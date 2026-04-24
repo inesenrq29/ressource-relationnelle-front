@@ -16,6 +16,29 @@
       Accueil
     </a>
 
+    <button
+      mat-button
+      class="rr-navbar__menu-trigger"
+      [matMenuTriggerFor]="resourcesMenu"
+    >
+      Les ressources
+      <mat-icon>expand_more</mat-icon>
+    </button>
+
+    <mat-menu #resourcesMenu="matMenu">
+      <button mat-menu-item routerLink="/resources/add">
+        <span>Ajouter une ressource</span>
+      </button>
+
+      <button mat-menu-item routerLink="/resources/categories/add">
+        <span>Ajouter une catégorie</span>
+      </button>
+
+      <button mat-menu-item routerLink="/resources/all">
+        <span>Toutes les ressources</span>
+      </button>
+    </mat-menu>
+
     <ng-container *ngIf="!session.isLoggedIn(); else connectedLinks">
       <a
         mat-button
@@ -38,6 +61,7 @@
       <a
         mat-button
         class="rr-navbar__profile"
+        routerLink="/profile"
         routerLinkActive="is-active"
       >
         Hello {{ session.user()?.pseudo }} !

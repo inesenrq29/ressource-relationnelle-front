@@ -36,7 +36,7 @@ export class Home implements AfterViewInit {
       title: 'Articles',
       icon: 'article',
       tag: 'Lire',
-      description: 'Des contenus écrits pour mieux comprendre les dynamiques relationnelles du quotidien.',
+      description: 'Des contenus écrits pour mieux comprendre les relations du quotidien.',
       points: ['Formats courts et lisibles', 'Repères concrets', 'Lecture autonome']
     },
     {
