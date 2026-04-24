@@ -126,9 +126,7 @@
 
       <small
         class="field-error"
-        *ngIf="
-          isPrivacyPolicyAccepted.touched && isPrivacyPolicyAccepted.errors?.['required']
-        "
+        *ngIf="isPrivacyPolicyAccepted.touched"
       >
         La politique de confidentialité doit être acceptée.
       </small>
