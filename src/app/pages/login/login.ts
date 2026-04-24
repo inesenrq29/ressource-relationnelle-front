@@ -2,10 +2,13 @@ import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+
+import { SessionService } from '../../core/services/session.service';
 import { AuthService } from '../../core/services/auth';
 
 @Component({
   selector: 'app-login',
+  standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './login.html',
   styleUrl: './login.css',
@@ -14,6 +17,7 @@ export class LoginComponent {
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly sessionService = inject(SessionService);
 
   loading = false;
   errorMessage = '';
@@ -33,9 +37,19 @@ export class LoginComponent {
     this.errorMessage = '';
 
     this.authService.login(this.form.getRawValue()).subscribe({
-      next: () => {
+      next: (response) => {
         this.loading = false;
-        this.router.navigateByUrl('/home');
+
+        this.sessionService.setSession(
+          {
+            id: response.userDto.appUserId,
+            pseudo: response.userDto.pseudo,
+            email: response.userDto.mail,
+          },
+          response.accessToken
+        );
+
+        this.router.navigateByUrl('/');
       },
       error: (error) => {
         this.loading = false;

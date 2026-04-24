@@ -1,14 +1,56 @@
 <mat-toolbar class="rr-navbar">
-  <div class="rr-navbar__brand" routerLink="/">
+  <a class="rr-navbar__brand" routerLink="/" aria-label="Aller à l'accueil">
     <span class="rr-navbar__logo">RR</span>
     <span class="rr-navbar__title">Ressources relationnelles</span>
-  </div>
+  </a>
 
   <div class="rr-navbar__spacer"></div>
 
-  <nav class="rr-navbar__links">
-    <a mat-button routerLink="/">Accueil</a>
-    <a mat-button routerLink="/login">Connexion</a>
-    <a mat-raised-button class="rr-navbar__cta" routerLink="/register">Inscription</a>
+  <nav class="rr-navbar__links" aria-label="Navigation principale">
+    <a
+      mat-button
+      routerLink="/"
+      routerLinkActive="is-active"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      Accueil
+    </a>
+
+    <ng-container *ngIf="!session.isLoggedIn(); else connectedLinks">
+      <a
+        mat-button
+        routerLink="/login"
+        routerLinkActive="is-active"
+      >
+        Connexion
+      </a>
+
+      <a
+        mat-raised-button
+        class="rr-navbar__cta"
+        routerLink="/register"
+      >
+        Inscription
+      </a>
+    </ng-container>
+
+    <ng-template #connectedLinks>
+      <a
+        mat-button
+        class="rr-navbar__profile"
+        routerLinkActive="is-active"
+      >
+        Hello {{ session.user()?.pseudo }} !
+      </a>
+
+      <button
+        mat-stroked-button
+        type="button"
+        class="rr-navbar__logout"
+        (click)="logout()"
+      >
+        Déconnexion
+      </button>
+    </ng-template>
   </nav>
 </mat-toolbar>
