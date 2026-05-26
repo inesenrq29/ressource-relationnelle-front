@@ -1,59 +1,89 @@
-<section class="resources-page">
-  <div class="resources-page__intro">
-    <p class="resources-page__eyebrow">Les ressources</p>
-    <h1>Ajouter une ressource</h1>
-    <p>
-      Renseigne les informations utiles pour créer une nouvelle ressource.
-    </p>
-  </div>
+<section class="create-resource-page">
+  <mat-card class="create-resource-card">
+    <div class="page-header">
+      <p>Nouvelle ressource</p>
+      <h1>Créer une ressource</h1>
+      <span>
+        Réponds simplement aux questions ci-dessous. La ressource sera créée en brouillon.
+      </span>
+    </div>
 
-  <div class="resources-layout">
-    <mat-card class="resource-form-card">
-      <form class="resource-form" [formGroup]="form" (ngSubmit)="submit()">
-        <div class="form-grid">
-          <mat-form-field appearance="outline">
-            <mat-label>Titre</mat-label>
-            <input
-              matInput
-              formControlName="resourceTitle"
-            />
-            <mat-error *ngIf="resourceTitle.invalid && resourceTitle.touched">
-              Le titre est requis.
-            </mat-error>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline">
-            <mat-label>Type de ressource</mat-label>
-            <mat-select formControlName="resourceType">
-              <mat-option *ngFor="let item of resourceTypes" [value]="item.value">
-                {{ item.label }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="resourceType.invalid && resourceType.touched">
-              Le type est requis.
-            </mat-error>
-          </mat-form-field>
-        </div>
+    <form [formGroup]="form" (ngSubmit)="submit()" class="resource-form">
+      <div class="question">
+        <label>1. Dans quelle catégorie ?</label>
 
         <mat-form-field appearance="outline">
           <mat-label>Catégorie</mat-label>
           <mat-select formControlName="categoryId">
-            <mat-option *ngFor="let category of categories" [value]="category.categoryId">
+            <mat-option
+              *ngFor="let category of categories"
+              [value]="category.categoryId"
+            >
               {{ category.name }}
             </mat-option>
           </mat-select>
+
           <mat-error *ngIf="categoryId.invalid && categoryId.touched">
-            La catégorie est requise.
+            La catégorie est obligatoire.
           </mat-error>
         </mat-form-field>
+
+        <a
+          mat-button
+          routerLink="/resources/categories/add"
+          *ngIf="categories.length === 0"
+        >
+          Créer une catégorie
+        </a>
+      </div>
+
+      <div class="question">
+        <label>2. Quel type de ressource ?</label>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Type</mat-label>
+          <mat-select formControlName="resourceType">
+            <mat-option
+              *ngFor="let type of resourceTypes"
+              [value]="type.value"
+            >
+              {{ type.label }}
+            </mat-option>
+          </mat-select>
+
+          <mat-error *ngIf="resourceType.invalid && resourceType.touched">
+            Le type est obligatoire.
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="question">
+        <label>3. Quel titre ?</label>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Titre</mat-label>
+          <input
+            matInput
+            formControlName="resourceTitle"
+            placeholder="Ex : Article sur le bien-être"
+          />
+
+          <mat-error *ngIf="resourceTitle.invalid && resourceTitle.touched">
+            Le titre est obligatoire.
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="question">
+        <label>4. Description et tags</label>
 
         <mat-form-field appearance="outline">
           <mat-label>Description</mat-label>
           <textarea
             matInput
-            rows="5"
+            rows="4"
             formControlName="resourceDescription"
-            placeholder="Décris la ressource..."
+            placeholder="Décris rapidement la ressource."
           ></textarea>
         </mat-form-field>
 
@@ -62,51 +92,31 @@
           <input
             matInput
             formControlName="tagsRaw"
-            placeholder="Famille, amis.."
+            placeholder="bien-être, communication, famille"
           />
           <mat-hint>Sépare les tags par des virgules.</mat-hint>
         </mat-form-field>
+      </div>
 
-        <div class="resource-feedback" *ngIf="errorMessage || successMessage">
-          <p class="resource-feedback__error" *ngIf="errorMessage">{{ errorMessage }}</p>
-          <p class="resource-feedback__success" *ngIf="successMessage">{{ successMessage }}</p>
-        </div>
+      <div class="feedback" *ngIf="errorMessage || successMessage">
+        <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+        <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
+      </div>
+
+      <div class="actions">
+        <a mat-stroked-button routerLink="/resources">
+          Retour au catalogue
+        </a>
 
         <button
           mat-raised-button
-          class="resource-submit-btn"
+          class="submit-button"
           type="submit"
-          [disabled]="submitLoading"
+          [disabled]="loading"
         >
-          {{ submitLoading ? 'Ajout en cours...' : 'Ajouter la ressource' }}
+          {{ loading ? 'Création...' : 'Créer la ressource' }}
         </button>
-      </form>
-    </mat-card>
-
-    <div class="resources-preview">
-      <h2>Ressources existantes</h2>
-
-      <div class="resource-empty" *ngIf="resources.length === 0 && !loading">
-        Aucune ressource disponible pour le moment.
       </div>
-
-      <div class="resource-empty" *ngIf="loading">
-        Chargement des catégories et des ressources...
-      </div>
-
-      <mat-card class="resource-item-card" *ngFor="let resource of resources">
-        <div class="resource-item-card__top">
-          <h3>{{ resource.resourceTitle }}</h3>
-          <span>{{ resource.resourceType }}</span>
-        </div>
-
-        <p class="resource-item-card__relation">{{ resource.categoryName }}</p>
-        <p>{{ resource.resourceDescription || 'Aucune description.' }}</p>
-
-        <div class="resource-tags" *ngIf="resource.tags.length">
-          <span class="resource-tag" *ngFor="let tag of resource.tags">{{ tag }}</span>
-        </div>
-      </mat-card>
-    </div>
-  </div>
+    </form>
+  </mat-card>
 </section>

@@ -115,14 +115,95 @@ export class AuthService {
   }
 
   private persistSession(response: AuthResponse): void {
+    const roleFromUserDto = this.extractRoleFromUserDto(response.userDto);
+    const roleFromToken = this.extractRoleFromToken(response.accessToken);
+
     this.sessionService.setSession(
       {
         id: response.userDto.appUserId,
         pseudo: response.userDto.pseudo,
         email: response.userDto.mail,
-        role: response.userDto.role?.roleName,
+        role: roleFromUserDto ?? roleFromToken ?? undefined,
       },
       response.accessToken,
     );
+  }
+
+  private extractRoleFromUserDto(userDto: UserDto): string | null {
+    const userWithRole = userDto as unknown as {
+      role?: string | {
+        roleName?: string;
+        name?: string;
+        authority?: string;
+      };
+    };
+
+    if (!userWithRole.role) {
+      return null;
+    }
+
+    if (typeof userWithRole.role === 'string') {
+      return this.normalizeRole(userWithRole.role);
+    }
+
+    return this.normalizeRole(
+      userWithRole.role.roleName ??
+        userWithRole.role.name ??
+        userWithRole.role.authority ??
+        null,
+    );
+  }
+
+  private extractRoleFromToken(token: string | null | undefined): string | null {
+    if (!token) {
+      return null;
+    }
+
+    try {
+      const payloadPart = token.split('.')[1];
+
+      if (!payloadPart) {
+        return null;
+      }
+
+      const normalizedPayload = payloadPart
+        .replace(/-/g, '+')
+        .replace(/_/g, '/');
+
+      const paddedPayload = normalizedPayload.padEnd(
+        normalizedPayload.length + ((4 - normalizedPayload.length % 4) % 4),
+        '=',
+      );
+
+      const decodedPayload = JSON.parse(atob(paddedPayload)) as {
+        role?: string;
+        authorities?: string[];
+        scope?: string;
+      };
+
+      if (decodedPayload.role) {
+        return this.normalizeRole(decodedPayload.role);
+      }
+
+      if (decodedPayload.authorities?.length) {
+        return this.normalizeRole(decodedPayload.authorities[0]);
+      }
+
+      if (decodedPayload.scope) {
+        return this.normalizeRole(decodedPayload.scope);
+      }
+
+      return null;
+    } catch {
+      return null;
+    }
+  }
+
+  private normalizeRole(role: string | null): string | null {
+    if (!role) {
+      return null;
+    }
+
+    return role.replace('ROLE_', '').trim();
   }
 }

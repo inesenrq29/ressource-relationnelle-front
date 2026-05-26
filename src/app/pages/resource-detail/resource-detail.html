@@ -7,36 +7,47 @@
     Chargement de la ressource...
   </div>
 
-  <div class="resource-detail-state resource-detail-state--error" *ngIf="!loading && errorMessage">
+  <div
+    class="resource-detail-state resource-detail-state--error"
+    *ngIf="!loading && errorMessage"
+  >
     {{ errorMessage }}
   </div>
 
-  <mat-card class="resource-detail-card" *ngIf="!loading && resource">
+  <mat-card
+    class="resource-detail-card"
+    *ngIf="!loading && !errorMessage && resource as currentResource"
+  >
     <div class="resource-detail-card__header">
       <div>
         <p class="resource-detail-card__eyebrow">
-          {{ resource.categoryName || 'Sans catégorie' }}
+          {{ currentResource.categoryName || 'Sans catégorie' }}
         </p>
 
-        <h1>{{ resource.resourceTitle }}</h1>
+        <h1>{{ currentResource.resourceTitle }}</h1>
       </div>
 
       <span class="resource-detail-card__type">
-        {{ getResourceTypeLabel(resource.resourceType) }}
+        {{ getResourceTypeLabel(currentResource.resourceType) }}
       </span>
     </div>
 
     <div class="resource-detail-card__meta">
-      <span>Statut : {{ resource.status }}</span>
-      <span>Créée le {{ resource.resourceCreatedAt | date: 'dd/MM/yyyy' }}</span>
+      <span>
+        Statut : {{ getStatusLabel(currentResource.status) }}
+      </span>
+
+      <span *ngIf="currentResource.resourceCreatedAt">
+        Créée le {{ currentResource.resourceCreatedAt | date: 'dd/MM/yyyy' }}
+      </span>
     </div>
 
     <p class="resource-detail-card__description">
-      {{ resource.resourceDescription || 'Aucune description disponible.' }}
+      {{ currentResource.resourceDescription || 'Aucune description disponible.' }}
     </p>
 
-    <div class="resource-tags" *ngIf="resource.tags.length">
-      <span class="resource-tag" *ngFor="let tag of resource.tags">
+    <div class="resource-tags" *ngIf="currentResource.tags.length > 0">
+      <span class="resource-tag" *ngFor="let tag of currentResource.tags">
         #{{ tag }}
       </span>
     </div>

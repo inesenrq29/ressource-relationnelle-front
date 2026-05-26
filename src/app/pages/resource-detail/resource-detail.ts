@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { finalize } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 
@@ -25,7 +26,7 @@ export class ResourceDetailComponent implements OnInit {
   errorMessage = '';
   resource: ResourceDto | null = null;
 
-  readonly resourceTypeLabels: Record<ResourceType, string> = {
+  readonly resourceTypeLabels: Record<string, string> = {
     ARTICLE: 'Article',
     VIDEO: 'Vidéo',
     PDF: 'PDF',
@@ -40,24 +41,74 @@ export class ResourceDetailComponent implements OnInit {
     const resourceId = this.route.snapshot.paramMap.get('resourceId');
 
     if (!resourceId) {
-      this.errorMessage = 'Ressource introuvable.';
       this.loading = false;
+      this.errorMessage = 'Identifiant de ressource introuvable.';
       return;
     }
 
-    this.resourceService.getResourceById(resourceId).subscribe({
-      next: (resource) => {
-        this.resource = resource;
-        this.loading = false;
-      },
-      error: () => {
-        this.errorMessage = 'Impossible de charger cette ressource.';
-        this.loading = false;
-      },
-    });
+    this.loadResourceFromCatalog(resourceId);
   }
 
-  getResourceTypeLabel(type: ResourceType): string {
+  getResourceTypeLabel(type: ResourceType | string | null | undefined): string {
+    if (!type) {
+      return 'Type non renseigné';
+    }
+
     return this.resourceTypeLabels[type] ?? type;
+  }
+
+  getStatusLabel(status: string | null | undefined): string {
+    const labels: Record<string, string> = {
+      DRAFT: 'Brouillon',
+      PENDING_VALIDATION: 'En attente de validation',
+      PUBLISHED: 'Publié',
+      RESTRICTED: 'Restreint',
+      ARCHIVED: 'Archivé',
+    };
+
+    return status ? labels[status] ?? status : 'Statut inconnu';
+  }
+
+  private loadResourceFromCatalog(resourceId: string): void {
+    this.loading = true;
+    this.errorMessage = '';
+    this.resource = null;
+
+    this.resourceService
+      .getResources()
+      .pipe(
+        finalize(() => {
+          this.loading = false;
+        }),
+      )
+      .subscribe({
+        next: (resources) => {
+          const foundResource = resources.find(
+            (resource) => resource.resourceId === resourceId,
+          );
+
+          if (!foundResource) {
+            this.errorMessage = 'Cette ressource est introuvable.';
+            return;
+          }
+
+          this.errorMessage = '';
+          this.resource = {
+            ...foundResource,
+            tags: foundResource.tags ?? [],
+          };
+        },
+        error: (error) => {
+          console.error('[ResourceDetail] erreur =', error);
+
+          if (error?.status === 401 || error?.status === 403) {
+            this.errorMessage =
+              'Tu n’as pas les droits pour consulter cette ressource.';
+            return;
+          }
+
+          this.errorMessage = 'Impossible de charger cette ressource.';
+        },
+      });
   }
 }
