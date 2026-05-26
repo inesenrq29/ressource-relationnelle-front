@@ -21,7 +21,7 @@
       <p class="resource-item-card__relation">{{ resource.categoryName }}</p>
       <p>{{ resource.resourceDescription || 'Aucune description.' }}</p>
 
-      <div class="resource-tags" *ngIf="resource.tags?.length">
+      <div class="resource-tags" *ngIf="resource.tags.length">
         <span class="resource-tag" *ngFor="let tag of resource.tags">{{ tag }}</span>
       </div>
     </mat-card>

@@ -1,6 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, tap } from 'rxjs';
+import { SessionService } from './session.service';
 import {
   ApiErrorResponse,
   AuthResponse,
@@ -14,6 +15,8 @@ import {
 })
 export class AuthService {
   private readonly http = inject(HttpClient);
+  private readonly sessionService = inject(SessionService);
+
   private readonly apiUrl = '/api/auth';
 
   register(payload: RegisterRequest): Observable<AuthResponse> {
@@ -57,21 +60,34 @@ export class AuthService {
   }
 
   getAccessToken(): string | null {
-    return localStorage.getItem('accessToken');
+    return this.sessionService.getToken();
   }
 
   getCurrentUser(): UserDto | null {
-    const rawUser = localStorage.getItem('currentUser');
-    return rawUser ? (JSON.parse(rawUser) as UserDto) : null;
+    const currentUser = this.sessionService.user();
+
+    if (!currentUser) {
+      return null;
+    }
+
+    return {
+      appUserId: currentUser.id ?? '',
+      pseudo: currentUser.pseudo,
+      mail: currentUser.email ?? '',
+      role: currentUser.role
+        ? {
+            roleName: currentUser.role,
+          }
+        : undefined,
+    } as UserDto;
   }
 
   isLoggedIn(): boolean {
-    return !!this.getAccessToken();
+    return this.sessionService.isLoggedIn();
   }
 
   clearSession(): void {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('currentUser');
+    this.sessionService.clearSession();
   }
 
   getErrorMessage(error: unknown): string {
@@ -99,7 +115,14 @@ export class AuthService {
   }
 
   private persistSession(response: AuthResponse): void {
-    localStorage.setItem('accessToken', response.accessToken);
-    localStorage.setItem('currentUser', JSON.stringify(response.userDto));
+    this.sessionService.setSession(
+      {
+        id: response.userDto.appUserId,
+        pseudo: response.userDto.pseudo,
+        email: response.userDto.mail,
+        role: response.userDto.role?.roleName,
+      },
+      response.accessToken,
+    );
   }
 }

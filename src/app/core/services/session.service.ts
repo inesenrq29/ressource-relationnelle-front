@@ -4,6 +4,7 @@ export interface SessionUser {
   id?: string;
   pseudo: string;
   email?: string;
+  role?: string;
 }
 
 @Injectable({
@@ -17,6 +18,9 @@ export class SessionService {
   private readonly _user = signal<SessionUser | null>(this.initialUser);
 
   readonly user = this._user.asReadonly();
+
+  readonly role = computed(() => this._user()?.role ?? null);
+
   readonly isLoggedIn = computed(() => {
     const user = this._user();
     const token = localStorage.getItem(this.storageTokenKey);
@@ -41,6 +45,16 @@ export class SessionService {
 
   getToken(): string | null {
     return localStorage.getItem(this.storageTokenKey);
+  }
+
+  isAdmin(): boolean {
+    const role = this.role();
+    return role === 'ADMIN' || role === 'SUPER_ADMIN';
+  }
+
+  isModerator(): boolean {
+    const role = this.role();
+    return role === 'MODERATOR' || role === 'ADMIN' || role === 'SUPER_ADMIN';
   }
 
   private readStoredUser(): SessionUser | null {

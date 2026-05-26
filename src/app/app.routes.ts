@@ -1,37 +1,55 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth-guard';
+import { roleGuard } from './core/guards/role-guard';
 
 export const routes: Routes = [
   {
     path: '',
     loadComponent: () =>
-      import('./pages/home/home').then((m) => m.Home)
+      import('./pages/home/home').then((m) => m.Home),
   },
   {
     path: 'login',
     loadComponent: () =>
-      import('./pages/login/login').then((m) => m.LoginComponent)
+      import('./pages/login/login').then((m) => m.LoginComponent),
   },
   {
     path: 'register',
     loadComponent: () =>
-      import('./pages/register/register').then((m) => m.RegisterComponent)
+      import('./pages/register/register').then((m) => m.RegisterComponent),
+  },
+  {
+    path: 'resources',
+    loadComponent: () =>
+      import('./pages/resources-list/resources-list').then(
+        (m) => m.ResourcesListComponent,
+      ),
   },
   {
     path: 'resources/add',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./pages/resources/resources').then((m) => m.ResourcesComponent)
+      import('./pages/resources/resources').then((m) => m.ResourcesComponent),
   },
   {
     path: 'resources/categories/add',
-     canActivate: [authGuard],
+    canActivate: [authGuard, roleGuard],
+    data: {
+      roles: ['ADMIN', 'SUPER_ADMIN'],
+    },
     loadComponent: () =>
-      import('./pages/add-category/add-category').then((m) => m.AddCategoryComponent)
+      import('./pages/add-category/add-category').then(
+        (m) => m.AddCategoryComponent,
+      ),
   },
   {
-    path: 'resources/all',
+    path: 'profile',
+    canActivate: [authGuard],
     loadComponent: () =>
-      import('./pages/resources-list/resources-list').then((m) => m.ResourcesListComponent)
-  }
+      import('./pages/profile/profile').then((m) => m.Profile),
+  },
+  {
+    path: '**',
+    redirectTo: '',
+  },
 ];
