@@ -1,0 +1,44 @@
+<section class="resource-detail-page">
+  <a mat-button routerLink="/resources" class="back-link">
+    ← Retour aux ressources
+  </a>
+
+  <div class="resource-detail-state" *ngIf="loading">
+    Chargement de la ressource...
+  </div>
+
+  <div class="resource-detail-state resource-detail-state--error" *ngIf="!loading && errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <mat-card class="resource-detail-card" *ngIf="!loading && resource">
+    <div class="resource-detail-card__header">
+      <div>
+        <p class="resource-detail-card__eyebrow">
+          {{ resource.categoryName || 'Sans catégorie' }}
+        </p>
+
+        <h1>{{ resource.resourceTitle }}</h1>
+      </div>
+
+      <span class="resource-detail-card__type">
+        {{ getResourceTypeLabel(resource.resourceType) }}
+      </span>
+    </div>
+
+    <div class="resource-detail-card__meta">
+      <span>Statut : {{ resource.status }}</span>
+      <span>Créée le {{ resource.resourceCreatedAt | date: 'dd/MM/yyyy' }}</span>
+    </div>
+
+    <p class="resource-detail-card__description">
+      {{ resource.resourceDescription || 'Aucune description disponible.' }}
+    </p>
+
+    <div class="resource-tags" *ngIf="resource.tags.length">
+      <span class="resource-tag" *ngFor="let tag of resource.tags">
+        #{{ tag }}
+      </span>
+    </div>
+  </mat-card>
+</section>

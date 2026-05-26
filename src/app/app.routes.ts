@@ -43,6 +43,13 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'resources/:resourceId',
+    loadComponent: () =>
+      import('./pages/resource-detail/resource-detail').then(
+        (m) => m.ResourceDetailComponent,
+      ),
+  },
+  {
     path: 'profile',
     canActivate: [authGuard],
     loadComponent: () =>

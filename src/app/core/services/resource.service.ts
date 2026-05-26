@@ -1,7 +1,23 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { SessionService } from './session.service';
+
+export type ResourceStatus =
+  | 'DRAFT'
+  | 'PENDING_VALIDATION'
+  | 'PUBLISHED'
+  | 'ARCHIVED'
+  | 'RESTRICTED';
+
+export type ResourceType =
+  | 'CHALLENGE_CARD'
+  | 'EXERCISE_WORKSHOP'
+  | 'READING_SHEET'
+  | 'ACTIVITY_GAME'
+  | 'PDF'
+  | 'ARTICLE'
+  | 'GAME'
+  | 'VIDEO';
 
 export interface CategoryDto {
   categoryId: string;
@@ -12,10 +28,10 @@ export interface ResourceDto {
   resourceId: string;
   resourceTitle: string;
   resourceDescription: string;
-  status: string;
+  status: ResourceStatus;
   categoryId: string;
   categoryName: string;
-  resourceType: string;
+  resourceType: ResourceType;
   tags: string[];
   resourceIsActive: boolean;
   resourceCreatedAt: string;
@@ -24,18 +40,10 @@ export interface ResourceDto {
 export interface CreateResourceRequest {
   resourceTitle: string;
   resourceDescription: string;
-  status: 'DRAFT' | 'PENDING_VALIDATION' | 'PUBLISHED' | 'ARCHIVED' | 'RESTRICTED';
+  status: ResourceStatus;
   categoryId: string;
   tags: string[];
-  resourceType:
-    | 'CHALLENGE_CARD'
-    | 'EXERCISE_WORKSHOP'
-    | 'READING_SHEET'
-    | 'ACTIVITY_GAME'
-    | 'PDF'
-    | 'ARTICLE'
-    | 'GAME'
-    | 'VIDEO';
+  resourceType: ResourceType;
 }
 
 export interface CreateCategoryRequest {
@@ -43,48 +51,41 @@ export interface CreateCategoryRequest {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ResourceService {
   private readonly http = inject(HttpClient);
-  private readonly sessionService = inject(SessionService);
 
   private readonly baseUrl = '/api/resources';
   private readonly categoriesUrl = '/api/categories';
 
   getCategories(): Observable<CategoryDto[]> {
-    return this.http.get<CategoryDto[]>(this.categoriesUrl, {
-      headers: this.buildAuthHeaders()
-    });
+    return this.http.get<CategoryDto[]>(this.categoriesUrl);
   }
 
   getResources(): Observable<ResourceDto[]> {
-    return this.http.get<ResourceDto[]>(this.baseUrl, {
-      headers: this.buildAuthHeaders()
-    });
+    return this.http.get<ResourceDto[]>(this.baseUrl);
+  }
+
+  getResourceById(resourceId: string): Observable<ResourceDto> {
+    return this.http.get<ResourceDto>(`${this.baseUrl}/${resourceId}`);
+  }
+
+  filterResources(filter: string): Observable<ResourceDto[]> {
+    const params = new HttpParams().set('filter', filter);
+    return this.http.get<ResourceDto[]>(`${this.baseUrl}/filter`, { params });
+  }
+
+  sortResources(isAscending: boolean): Observable<ResourceDto[]> {
+    const params = new HttpParams().set('isAscending', isAscending);
+    return this.http.get<ResourceDto[]>(`${this.baseUrl}/sorted`, { params });
   }
 
   createResource(payload: CreateResourceRequest): Observable<ResourceDto> {
-    return this.http.post<ResourceDto>(this.baseUrl, payload, {
-      headers: this.buildAuthHeaders()
-    });
+    return this.http.post<ResourceDto>(this.baseUrl, payload);
   }
 
   createCategory(payload: CreateCategoryRequest): Observable<CategoryDto> {
-    return this.http.post<CategoryDto>(this.categoriesUrl, payload, {
-      headers: this.buildAuthHeaders()
-    });
-  }
-
-  private buildAuthHeaders(): HttpHeaders {
-    const token = this.sessionService.getToken();
-
-    if (!token) {
-      return new HttpHeaders();
-    }
-
-    return new HttpHeaders({
-      Authorization: `Bearer ${token}`
-    });
+    return this.http.post<CategoryDto>(this.categoriesUrl, payload);
   }
 }
