@@ -1,0 +1,131 @@
+<section class="admin-resources-page">
+  <mat-card class="admin-card">
+    <div class="page-header">
+      <p>Back-office</p>
+      <h1>Gestion des ressources</h1>
+      <span>
+        Valide, publie ou archive les ressources proposées par les utilisateurs.
+      </span>
+    </div>
+
+    <div class="top-actions">
+      <a mat-stroked-button routerLink="/resources/add">
+        Ajouter une ressource
+      </a>
+
+      <a mat-stroked-button routerLink="/resources/categories/add">
+        Ajouter une catégorie
+      </a>
+    </div>
+
+    <div class="filters">
+      <mat-form-field appearance="outline">
+        <mat-label>Recherche</mat-label>
+        <input
+          matInput
+          [(ngModel)]="search"
+          placeholder="Titre, description, catégorie..."
+        />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Statut</mat-label>
+        <mat-select [(ngModel)]="selectedStatus">
+          <mat-option *ngFor="let status of statuses" [value]="status.value">
+            {{ status.label }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="feedback" *ngIf="errorMessage || successMessage">
+      <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+      <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
+    </div>
+
+    <p class="state" *ngIf="loading">
+      Chargement des ressources...
+    </p>
+
+    <p class="state" *ngIf="!loading && filteredResources.length === 0">
+      Aucune ressource trouvée.
+    </p>
+
+    <div class="resources-list" *ngIf="!loading && filteredResources.length > 0">
+      <mat-card class="resource-card" *ngFor="let resource of filteredResources">
+        <div class="resource-top">
+          <span class="status">
+            {{ getStatusLabel(resource.status) }}
+          </span>
+        </div>
+
+        <h2>{{ resource.resourceTitle }}</h2>
+
+        <p class="category">
+          {{ resource.categoryName || 'Sans catégorie' }}
+        </p>
+
+        <p class="description">
+          {{ resource.resourceDescription || 'Aucune description.' }}
+        </p>
+
+        <div class="actions">
+          <a mat-button [routerLink]="['/resources', resource.resourceId]">
+            Voir
+          </a>
+
+          <button
+            mat-stroked-button
+            type="button"
+            *ngIf="resource.status === 'DRAFT'"
+            [disabled]="actionLoading"
+            (click)="submitForValidation(resource)"
+          >
+            Soumettre
+          </button>
+
+          <button
+            mat-raised-button
+            class="primary-button"
+            type="button"
+            *ngIf="resource.status === 'PENDING_VALIDATION'"
+            [disabled]="actionLoading"
+            (click)="publish(resource)"
+          >
+            Publier
+          </button>
+
+          <button
+            mat-stroked-button
+            type="button"
+            *ngIf="resource.status === 'PUBLISHED'"
+            [disabled]="actionLoading"
+            (click)="restrict(resource)"
+          >
+            Restreindre
+          </button>
+
+          <button
+            mat-stroked-button
+            type="button"
+            *ngIf="resource.status === 'PUBLISHED' || resource.status === 'RESTRICTED'"
+            [disabled]="actionLoading"
+            (click)="archive(resource)"
+          >
+            Archiver
+          </button>
+
+          <button
+            mat-button
+            type="button"
+            class="danger-button"
+            [disabled]="actionLoading"
+            (click)="delete(resource)"
+          >
+            Supprimer
+          </button>
+        </div>
+      </mat-card>
+    </div>
+  </mat-card>
+</section>

@@ -36,7 +36,7 @@ export const routes: Routes = [
     path: 'resources/categories/add',
     canActivate: [authGuard, roleGuard],
     data: {
-      roles: ['ADMIN', 'SUPER_ADMIN'],
+      roles: ['MODERATOR', 'ADMIN', 'SUPER_ADMIN'],
     },
     loadComponent: () =>
       import('./pages/add-category/add-category').then(
@@ -55,6 +55,17 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () =>
       import('./pages/profile/profile').then((m) => m.Profile),
+  },
+  {
+    path: 'admin/resources',
+    canActivate: [authGuard, roleGuard],
+    data: {
+      roles: ['MODERATOR', 'ADMIN', 'SUPER_ADMIN'],
+    },
+    loadComponent: () =>
+      import('./pages/admin-resources/admin-resources').then(
+        (m) => m.AdminResourcesComponent,
+      ),
   },
   {
     path: '**',

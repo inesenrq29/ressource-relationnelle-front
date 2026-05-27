@@ -88,4 +88,21 @@ export class ResourceService {
   createCategory(payload: CreateCategoryRequest): Observable<CategoryDto> {
     return this.http.post<CategoryDto>(this.categoriesUrl, payload);
   }
+  submitResourceForValidation(resourceId: string): Observable<void> {
+    return this.http.patch<void>(`${this.baseUrl}/${resourceId}/submit`, {});
+  }
+
+  validateResource(resourceId: string): Observable<void> {
+    return this.http.patch<void>(`${this.baseUrl}/${resourceId}/validate`, {});
+  }
+
+  updateResourceStatus(resourceId: string, status: ResourceStatus): Observable<void> {
+    return this.http.put<void>(`${this.baseUrl}/${resourceId}/status`, {
+      status,
+    });
+  }
+
+  deleteResource(resourceId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${resourceId}`);
+  }
 }

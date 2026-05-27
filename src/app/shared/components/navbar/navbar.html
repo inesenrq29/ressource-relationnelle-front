@@ -1,16 +1,14 @@
-<mat-toolbar class="rr-navbar">
-  <a class="rr-navbar__brand" routerLink="/" aria-label="Aller à l'accueil">
-    <span class="rr-navbar__logo">RR</span>
-    <span class="rr-navbar__title">Ressources relationnelles</span>
+<mat-toolbar class="navbar">
+  <a routerLink="/" class="navbar-brand">
+    <span class="navbar-brand__logo">RR</span>
+    <span class="navbar-brand__text">Ressources Relationnelles</span>
   </a>
 
-  <div class="rr-navbar__spacer"></div>
-
-  <nav class="rr-navbar__links" aria-label="Navigation principale">
+  <nav class="navbar-links">
     <a
       mat-button
       routerLink="/"
-      routerLinkActive="is-active"
+      routerLinkActive="active-link"
       [routerLinkActiveOptions]="{ exact: true }"
     >
       Accueil
@@ -18,63 +16,73 @@
 
     <button
       mat-button
-      class="rr-navbar__menu-trigger"
+      type="button"
+      class="menu-button"
       [matMenuTriggerFor]="resourcesMenu"
     >
-      Les ressources
+      Ressources
       <mat-icon>expand_more</mat-icon>
     </button>
 
-    <mat-menu #resourcesMenu="matMenu">
-      <button mat-menu-item routerLink="/resources/add">
-        <span>Ajouter une ressource</span>
+    <button
+      mat-button
+      type="button"
+      class="menu-button admin-menu-button"
+      *ngIf="canSeeAdminMenu()"
+      [matMenuTriggerFor]="adminMenu"
+    >
+      Administration
+      <mat-icon>expand_more</mat-icon>
+    </button>
+  </nav>
+
+  <div class="navbar-actions">
+    <ng-container *ngIf="session.isLoggedIn(); else guestActions">
+      <button mat-button routerLink="/profile" class="profile-button">
+        <span>Hello {{ session.user()?.pseudo }} !</span>
       </button>
 
-      <button mat-menu-item routerLink="/resources/categories/add">
-        <span>Ajouter une catégorie</span>
+      <button mat-stroked-button type="button" (click)="logout()">
+        Déconnexion
       </button>
+    </ng-container>
 
-      <button mat-menu-item routerLink="/resources">
-        <span>Toutes les ressources</span>
-      </button>
-    </mat-menu>
-
-    <ng-container *ngIf="!session.isLoggedIn(); else connectedLinks">
-      <a
-        mat-button
-        routerLink="/login"
-        routerLinkActive="is-active"
-      >
+    <ng-template #guestActions>
+      <a mat-button routerLink="/login">
         Connexion
       </a>
 
-      <a
-        mat-raised-button
-        class="rr-navbar__cta"
-        routerLink="/register"
-      >
+      <a mat-raised-button routerLink="/register" class="register-button">
         Inscription
       </a>
-    </ng-container>
-
-    <ng-template #connectedLinks>
-      <a
-        mat-button
-        class="rr-navbar__profile"
-        routerLink="/profile"
-        routerLinkActive="is-active"
-      >
-        Hello {{ session.user()?.pseudo }} !
-      </a>
-
-      <button
-        mat-stroked-button
-        type="button"
-        class="rr-navbar__logout"
-        (click)="logout()"
-      >
-        Déconnexion
-      </button>
     </ng-template>
-  </nav>
+  </div>
 </mat-toolbar>
+
+<mat-menu #resourcesMenu="matMenu">
+  <button mat-menu-item routerLink="/resources">
+    <mat-icon>library_books</mat-icon>
+    <span>Voir le catalogue</span>
+  </button>
+
+  <button
+    mat-menu-item
+    routerLink="/resources/add"
+    *ngIf="session.isLoggedIn()"
+  >
+    <mat-icon>add_circle</mat-icon>
+    <span>Ajouter une ressource</span>
+  </button>
+</mat-menu>
+
+<mat-menu #adminMenu="matMenu">
+  <button mat-menu-item routerLink="/admin/resources">
+    <mat-icon>admin_panel_settings</mat-icon>
+    <span>Gestion des ressources</span>
+  </button>
+
+  <button mat-menu-item routerLink="/resources/categories/add">
+    <mat-icon>category</mat-icon>
+    <span>Ajouter une catégorie</span>
+  </button>
+</mat-menu>
