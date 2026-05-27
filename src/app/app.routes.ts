@@ -20,6 +20,7 @@ export const routes: Routes = [
   },
   {
     path: 'resources',
+    pathMatch: 'full',
     loadComponent: () =>
       import('./pages/resources-list/resources-list').then(
         (m) => m.ResourcesListComponent,

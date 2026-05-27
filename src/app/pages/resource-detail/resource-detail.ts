@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
@@ -22,9 +22,9 @@ export class ResourceDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly resourceService = inject(ResourceService);
 
-  loading = true;
-  errorMessage = '';
-  resource: ResourceDto | null = null;
+  loading = signal(true);
+  errorMessage = signal('');
+  resource = signal<ResourceDto | null>(null);
 
   readonly resourceTypeLabels: Record<string, string> = {
     ARTICLE: 'Article',
@@ -41,19 +41,16 @@ export class ResourceDetailComponent implements OnInit {
     const resourceId = this.route.snapshot.paramMap.get('resourceId');
 
     if (!resourceId) {
-      this.loading = false;
-      this.errorMessage = 'Identifiant de ressource introuvable.';
+      this.loading.set(false);
+      this.errorMessage.set('Identifiant de ressource introuvable.');
       return;
     }
 
-    this.loadResourceFromCatalog(resourceId);
+    this.loadResource(resourceId);
   }
 
   getResourceTypeLabel(type: ResourceType | string | null | undefined): string {
-    if (!type) {
-      return 'Type non renseigné';
-    }
-
+    if (!type) return 'Type non renseigné';
     return this.resourceTypeLabels[type] ?? type;
   }
 
@@ -65,49 +62,28 @@ export class ResourceDetailComponent implements OnInit {
       RESTRICTED: 'Restreint',
       ARCHIVED: 'Archivé',
     };
-
     return status ? labels[status] ?? status : 'Statut inconnu';
   }
 
-  private loadResourceFromCatalog(resourceId: string): void {
-    this.loading = true;
-    this.errorMessage = '';
-    this.resource = null;
+  private loadResource(resourceId: string): void {
+    this.loading.set(true);
+    this.errorMessage.set('');
+    this.resource.set(null);
 
     this.resourceService
       .getResources()
-      .pipe(
-        finalize(() => {
-          this.loading = false;
-        }),
-      )
+      .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (resources) => {
-          const foundResource = resources.find(
-            (resource) => resource.resourceId === resourceId,
-          );
-
-          if (!foundResource) {
-            this.errorMessage = 'Cette ressource est introuvable.';
+          const found = resources.find((r) => r.resourceId === resourceId);
+          if (!found) {
+            this.errorMessage.set('Cette ressource est introuvable.');
             return;
           }
-
-          this.errorMessage = '';
-          this.resource = {
-            ...foundResource,
-            tags: foundResource.tags ?? [],
-          };
+          this.resource.set({ ...found, tags: found.tags ?? [] });
         },
-        error: (error) => {
-          console.error('[ResourceDetail] erreur =', error);
-
-          if (error?.status === 401 || error?.status === 403) {
-            this.errorMessage =
-              'Tu n’as pas les droits pour consulter cette ressource.';
-            return;
-          }
-
-          this.errorMessage = 'Impossible de charger cette ressource.';
+        error: () => {
+          this.errorMessage.set('Impossible de charger cette ressource.');
         },
       });
   }
