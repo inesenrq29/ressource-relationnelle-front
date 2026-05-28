@@ -85,4 +85,9 @@
     <mat-icon>category</mat-icon>
     <span>Ajouter une catégorie</span>
   </button>
+
+  <button mat-menu-item routerLink="/admin/stats" *ngIf="session.isAdmin()">
+    <mat-icon>bar_chart</mat-icon>
+    <span>Statistiques</span>
+  </button>
 </mat-menu>

@@ -1,13 +1,22 @@
-<section class="create-resource-page">
-  <mat-card class="create-resource-card">
+<section class="edit-resource-page">
+  <mat-card class="edit-resource-card">
     <div class="page-header">
-      <p>Nouvelle ressource</p>
-      <h1>Créer une ressource</h1>
+      <p>Modification</p>
+      <h1>Modifier la ressource</h1>
       <span>
-        Réponds simplement aux questions ci-dessous. La ressource sera créée en brouillon.
+        Mets à jour les informations ci-dessous. Les changements seront sauvegardés immédiatement.
       </span>
     </div>
 
+    @if (loading()) {
+    <p class="state">Chargement de la ressource...</p>
+    }
+
+    @if (!loading() && errorMessage() && !successMessage()) {
+    <p class="error-state">{{ errorMessage() }}</p>
+    }
+
+    @if (!loading()) {
     <form [formGroup]="form" (ngSubmit)="submit()" class="resource-form">
       <div class="question">
         <label>1. Dans quelle catégorie ?</label>
@@ -26,12 +35,6 @@
           <mat-error>La catégorie est obligatoire.</mat-error>
           }
         </mat-form-field>
-
-        @if (categories().length === 0) {
-        <a mat-button routerLink="/resources/categories/add">
-          Créer une catégorie
-        </a>
-        }
       </div>
 
       <div class="question">
@@ -106,19 +109,20 @@
       }
 
       <div class="actions">
-        <a mat-stroked-button routerLink="/resources">
-          Retour au catalogue
+        <a mat-stroked-button [routerLink]="['/resources', resourceId]">
+          Annuler
         </a>
 
         <button
           mat-raised-button
           class="submit-button"
           type="submit"
-          [disabled]="loading()"
+          [disabled]="saving()"
         >
-          {{ loading() ? 'Création...' : 'Créer la ressource' }}
+          {{ saving() ? 'Sauvegarde...' : 'Enregistrer les modifications' }}
         </button>
       </div>
     </form>
+    }
   </mat-card>
 </section>

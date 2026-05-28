@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { forkJoin } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -10,13 +11,13 @@ import { MatSelectModule } from '@angular/material/select';
 
 import {
   CategoryDto,
-  CreateResourceRequest,
   ResourceService,
   ResourceType,
+  UpdateResourceRequest,
 } from '../../core/services/resource.service';
 
 @Component({
-  selector: 'app-resources',
+  selector: 'app-resource-edit',
   standalone: true,
   imports: [
     CommonModule,
@@ -28,16 +29,19 @@ import {
     MatInputModule,
     MatSelectModule,
   ],
-  templateUrl: './resources.html',
-  styleUrl: './resources.css',
+  templateUrl: './resource-edit.html',
+  styleUrl: './resource-edit.css',
 })
-export class ResourcesComponent implements OnInit {
+export class ResourceEditComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly resourceService = inject(ResourceService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
+  resourceId = '';
   categories = signal<CategoryDto[]>([]);
-
-  loading = signal(false);
+  loading = signal(true);
+  saving = signal(false);
   errorMessage = signal('');
   successMessage = signal('');
 
@@ -61,7 +65,15 @@ export class ResourcesComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.loadCategories();
+    this.resourceId = this.route.snapshot.paramMap.get('resourceId') ?? '';
+
+    if (!this.resourceId) {
+      this.loading.set(false);
+      this.errorMessage.set('Identifiant de ressource introuvable.');
+      return;
+    }
+
+    this.loadData();
   }
 
   submit(): void {
@@ -71,49 +83,56 @@ export class ResourcesComponent implements OnInit {
       return;
     }
 
-    this.loading.set(true);
+    this.saving.set(true);
     this.errorMessage.set('');
     this.successMessage.set('');
 
     const value = this.form.getRawValue();
 
-    const payload: CreateResourceRequest = {
+    const payload: UpdateResourceRequest = {
       categoryId: value.categoryId,
       resourceType: value.resourceType as ResourceType,
       resourceTitle: value.resourceTitle,
       resourceDescription: value.resourceDescription,
       tags: this.parseTags(value.tagsRaw),
-      status: 'DRAFT',
     };
 
-    this.resourceService.createResource(payload).subscribe({
+    this.resourceService.updateResource(this.resourceId, payload).subscribe({
       next: () => {
-        this.loading.set(false);
-        this.successMessage.set('Ressource créée en brouillon');
-        this.form.reset({
-          categoryId: '',
-          resourceType: '',
-          resourceTitle: '',
-          resourceDescription: '',
-          tagsRaw: '',
-        });
+        this.saving.set(false);
+        this.successMessage.set('Ressource modifiée avec succès');
+        setTimeout(() => {
+          this.router.navigate(['/resources', this.resourceId]);
+        }, 1500);
       },
       error: (error) => {
-        this.loading.set(false);
+        this.saving.set(false);
         this.errorMessage.set(
-          error?.error?.message || 'Impossible de créer la ressource.'
+          error?.error?.message || 'Impossible de modifier la ressource.'
         );
       },
     });
   }
 
-  private loadCategories(): void {
-    this.resourceService.getCategories().subscribe({
-      next: (categories) => {
+  private loadData(): void {
+    forkJoin({
+      categories: this.resourceService.getCategories(),
+      resource: this.resourceService.getResourceById(this.resourceId),
+    }).subscribe({
+      next: ({ categories, resource }) => {
         this.categories.set(categories);
+        this.form.patchValue({
+          categoryId: resource.categoryId,
+          resourceType: resource.resourceType,
+          resourceTitle: resource.resourceTitle,
+          resourceDescription: resource.resourceDescription ?? '',
+          tagsRaw: (resource.tags ?? []).join(', '),
+        });
+        this.loading.set(false);
       },
       error: () => {
-        this.errorMessage.set('Impossible de charger les catégories.');
+        this.errorMessage.set('Impossible de charger les données de la ressource.');
+        this.loading.set(false);
       },
     });
   }
@@ -125,15 +144,7 @@ export class ResourcesComponent implements OnInit {
       .filter((tag) => tag.length > 0);
   }
 
-  get categoryId() {
-    return this.form.controls.categoryId;
-  }
-
-  get resourceType() {
-    return this.form.controls.resourceType;
-  }
-
-  get resourceTitle() {
-    return this.form.controls.resourceTitle;
-  }
+  get categoryId() { return this.form.controls.categoryId; }
+  get resourceType() { return this.form.controls.resourceType; }
+  get resourceTitle() { return this.form.controls.resourceTitle; }
 }

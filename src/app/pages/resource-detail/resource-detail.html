@@ -20,21 +20,15 @@
         </p>
         <h1>{{ currentResource.resourceTitle }}</h1>
       </div>
-
       <span class="resource-detail-card__type">
-          {{ getResourceTypeLabel(currentResource.resourceType) }}
-        </span>
+        {{ getResourceTypeLabel(currentResource.resourceType) }}
+      </span>
     </div>
 
     <div class="resource-detail-card__meta">
-        <span>
-          Statut : {{ getStatusLabel(currentResource.status) }}
-        </span>
-
+      <span>Statut : {{ getStatusLabel(currentResource.status) }}</span>
       @if (currentResource.resourceCreatedAt) {
-      <span>
-            Créée le {{ currentResource.resourceCreatedAt | date: 'dd/MM/yyyy' }}
-          </span>
+      <span>Créée le {{ currentResource.resourceCreatedAt | date: 'dd/MM/yyyy' }}</span>
       }
     </div>
 
@@ -49,6 +43,113 @@
       }
     </div>
     }
+
+    <div class="resource-share">
+      <button
+        class="resource-action-btn"
+        [class.resource-action-btn--copied]="copySuccess()"
+        (click)="copyLink()"
+      >
+        <mat-icon>{{ copySuccess() ? 'check_circle' : 'share' }}</mat-icon>
+        {{ copySuccess() ? 'Lien copié !' : 'Partager' }}
+      </button>
+    </div>
+
+    @if (session.isLoggedIn()) {
+    <div class="resource-actions">
+      <div class="resource-actions__buttons">
+        <button
+          class="resource-action-btn"
+          [class.resource-action-btn--active]="isFavorite()"
+          [disabled]="actionLoading()"
+          (click)="toggleFavorite()"
+        >
+          <mat-icon>{{ isFavorite() ? 'favorite' : 'favorite_border' }}</mat-icon>
+          {{ isFavorite() ? 'En favoris' : 'Ajouter aux favoris' }}
+        </button>
+
+        <button
+          class="resource-action-btn"
+          [class.resource-action-btn--active]="isSetAside()"
+          [disabled]="actionLoading()"
+          (click)="toggleSetAside()"
+        >
+          <mat-icon>{{ isSetAside() ? 'bookmark' : 'bookmark_border' }}</mat-icon>
+          {{ isSetAside() ? 'Mise de côté' : 'Mettre de côté' }}
+        </button>
+
+        <button
+          class="resource-action-btn"
+          [class.resource-action-btn--active]="isExploited()"
+          [disabled]="actionLoading()"
+          (click)="toggleExploited()"
+        >
+          <mat-icon>{{ isExploited() ? 'check_circle' : 'check_circle_outline' }}</mat-icon>
+          {{ isExploited() ? 'Exploitée' : 'Marquer comme exploitée' }}
+        </button>
+      </div>
+    </div>
+    } @else {
+    <p class="resource-actions-login">
+      <a routerLink="/login">Connecte-toi</a> pour interagir avec cette ressource.
+    </p>
+    }
+
+    @if (canEdit()) {
+    <div class="resource-detail-card__actions">
+      <a
+        mat-raised-button
+        [routerLink]="['/resources', currentResource.resourceId, 'edit']"
+        class="edit-button"
+      >
+        Modifier la ressource
+      </a>
+    </div>
+    }
+
+    <div class="resource-comments">
+      <h2 class="resource-comments__title">Commentaires</h2>
+
+      @if (session.isLoggedIn()) {
+      <form class="resource-comment-form" (submit)="submitComment(); $event.preventDefault()">
+        <h3 class="resource-comment-form__heading">Laisser un commentaire</h3>
+        <input
+          class="resource-comment-form__input"
+          type="text"
+          placeholder="Titre (optionnel)"
+          [value]="commentTitle()"
+          (input)="commentTitle.set($any($event.target).value)"
+          maxlength="100"
+        />
+        <textarea
+          class="resource-comment-form__textarea"
+          placeholder="Votre commentaire..."
+          [value]="commentContent()"
+          (input)="commentContent.set($any($event.target).value)"
+          rows="4"
+          maxlength="5000"
+        ></textarea>
+        <button
+          type="submit"
+          mat-raised-button
+          class="resource-comment-form__submit"
+          [disabled]="commentSubmitting() || !commentContent().trim()"
+        >
+          Publier
+        </button>
+        @if (commentSuccess()) {
+        <p class="resource-comment-form__success">{{ commentSuccess() }}</p>
+        }
+        @if (commentError()) {
+        <p class="resource-comment-form__error">{{ commentError() }}</p>
+        }
+      </form>
+      } @else {
+      <p class="resource-comments__login">
+        <a routerLink="/login">Connecte-toi</a> pour laisser un commentaire.
+      </p>
+      }
+    </div>
   </mat-card>
   }
 </section>

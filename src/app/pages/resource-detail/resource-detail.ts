@@ -1,30 +1,53 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { finalize } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 
 import {
   ResourceDto,
   ResourceService,
   ResourceType,
 } from '../../core/services/resource.service';
+import { SessionService } from '../../core/services/session.service';
 
 @Component({
   selector: 'app-resource-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, MatButtonModule, MatCardModule],
+  imports: [CommonModule, RouterLink, MatButtonModule, MatCardModule, MatIconModule],
   templateUrl: './resource-detail.html',
   styleUrl: './resource-detail.css',
 })
 export class ResourceDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly resourceService = inject(ResourceService);
+  protected readonly session = inject(SessionService);
 
   loading = signal(true);
   errorMessage = signal('');
   resource = signal<ResourceDto | null>(null);
+
+  isFavorite = signal(false);
+  isSetAside = signal(false);
+  isExploited = signal(false);
+  actionLoading = signal(false);
+
+  copySuccess = signal(false);
+
+  commentTitle = signal('');
+  commentContent = signal('');
+  commentSubmitting = signal(false);
+  commentSuccess = signal('');
+  commentError = signal('');
+
+  readonly canEdit = computed(() => {
+    if (!this.session.isLoggedIn()) return false;
+    if (this.session.isAdmin()) return true;
+    const res = this.resource();
+    if (!res?.creatorId) return false;
+    return res.creatorId === this.session.user()?.id;
+  });
 
   readonly resourceTypeLabels: Record<string, string> = {
     ARTICLE: 'Article',
@@ -39,14 +62,100 @@ export class ResourceDetailComponent implements OnInit {
 
   ngOnInit(): void {
     const resourceId = this.route.snapshot.paramMap.get('resourceId');
-
     if (!resourceId) {
       this.loading.set(false);
       this.errorMessage.set('Identifiant de ressource introuvable.');
       return;
     }
-
     this.loadResource(resourceId);
+  }
+
+  copyLink(): void {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      this.copySuccess.set(true);
+      setTimeout(() => this.copySuccess.set(false), 2000);
+    });
+  }
+
+  toggleFavorite(): void {
+    const userId = this.session.user()?.id;
+    const resourceId = this.resource()?.resourceId;
+    if (!userId || !resourceId || this.actionLoading()) return;
+
+    this.actionLoading.set(true);
+    const was = this.isFavorite();
+    const call = was
+      ? this.resourceService.removeResourceFromFavorite(userId, resourceId)
+      : this.resourceService.addResourceToFavorite(userId, resourceId);
+
+    call.subscribe({
+      next: () => { this.isFavorite.set(!was); this.actionLoading.set(false); },
+      error: () => { this.actionLoading.set(false); },
+    });
+  }
+
+  toggleSetAside(): void {
+    const userId = this.session.user()?.id;
+    const resourceId = this.resource()?.resourceId;
+    if (!userId || !resourceId || this.actionLoading()) return;
+
+    this.actionLoading.set(true);
+    const was = this.isSetAside();
+    const call = was
+      ? this.resourceService.unsetAsideResource(userId, resourceId)
+      : this.resourceService.setAsideResource(userId, resourceId);
+
+    call.subscribe({
+      next: () => { this.isSetAside.set(!was); this.actionLoading.set(false); },
+      error: () => { this.actionLoading.set(false); },
+    });
+  }
+
+  toggleExploited(): void {
+    const userId = this.session.user()?.id;
+    const resourceId = this.resource()?.resourceId;
+    if (!userId || !resourceId || this.actionLoading()) return;
+
+    this.actionLoading.set(true);
+    const was = this.isExploited();
+    const call = was
+      ? this.resourceService.markResourceAsUnexploited(userId, resourceId)
+      : this.resourceService.markResourceAsExploited(userId, resourceId);
+
+    call.subscribe({
+      next: () => { this.isExploited.set(!was); this.actionLoading.set(false); },
+      error: () => { this.actionLoading.set(false); },
+    });
+  }
+
+  submitComment(): void {
+    const userId = this.session.user()?.id;
+    const resourceId = this.resource()?.resourceId;
+    const content = this.commentContent().trim();
+
+    if (!userId || !resourceId || !content || this.commentSubmitting()) return;
+
+    this.commentSubmitting.set(true);
+    this.commentSuccess.set('');
+    this.commentError.set('');
+
+    const title = this.commentTitle().trim();
+
+    this.resourceService.addComment(userId, resourceId, {
+      ...(title ? { titleComments: title } : {}),
+      commentsContent: content,
+    }).subscribe({
+      next: () => {
+        this.commentTitle.set('');
+        this.commentContent.set('');
+        this.commentSuccess.set('Votre commentaire est en attente de modération.');
+        this.commentSubmitting.set(false);
+      },
+      error: () => {
+        this.commentError.set('Impossible de publier le commentaire. Réessayez plus tard.');
+        this.commentSubmitting.set(false);
+      },
+    });
   }
 
   getResourceTypeLabel(type: ResourceType | string | null | undefined): string {
@@ -68,23 +177,16 @@ export class ResourceDetailComponent implements OnInit {
   private loadResource(resourceId: string): void {
     this.loading.set(true);
     this.errorMessage.set('');
-    this.resource.set(null);
 
-    this.resourceService
-      .getResources()
-      .pipe(finalize(() => this.loading.set(false)))
-      .subscribe({
-        next: (resources) => {
-          const found = resources.find((r) => r.resourceId === resourceId);
-          if (!found) {
-            this.errorMessage.set('Cette ressource est introuvable.');
-            return;
-          }
-          this.resource.set({ ...found, tags: found.tags ?? [] });
-        },
-        error: () => {
-          this.errorMessage.set('Impossible de charger cette ressource.');
-        },
-      });
+    this.resourceService.getResourceById(resourceId).subscribe({
+      next: (resource) => {
+        this.resource.set({ ...resource, tags: resource.tags ?? [] });
+        this.loading.set(false);
+      },
+      error: () => {
+        this.errorMessage.set('Impossible de charger cette ressource.');
+        this.loading.set(false);
+      },
+    });
   }
 }

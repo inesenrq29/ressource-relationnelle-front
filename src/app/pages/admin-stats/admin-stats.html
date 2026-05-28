@@ -1,0 +1,84 @@
+<section class="admin-stats-page">
+  <h1 class="admin-stats-page__title">Statistiques</h1>
+
+  @if (loading()) {
+  <div class="admin-stats-state">Chargement des statistiques...</div>
+  } @else if (errorMessage()) {
+  <div class="admin-stats-state admin-stats-state--error">{{ errorMessage() }}</div>
+  } @else if (stats(); as s) {
+
+  <div class="admin-stats-summary">
+    <div class="admin-stats-card">
+      <span class="admin-stats-card__value">{{ s.totalResourcesCount }}</span>
+      <span class="admin-stats-card__label">Ressources totales</span>
+    </div>
+    <div class="admin-stats-card">
+      <span class="admin-stats-card__value">{{ s.exploitedResourcesCount }}</span>
+      <span class="admin-stats-card__label">Ressources exploitées</span>
+    </div>
+  </div>
+
+  <div class="admin-stats-grid">
+    <div class="admin-stats-section">
+      <h2 class="admin-stats-section__title">Par catégorie</h2>
+      @if (entries(s.resourcesByCategory).length === 0) {
+      <p class="admin-stats-empty">Aucune donnée.</p>
+      } @else {
+      <table class="admin-stats-table">
+        <thead>
+        <tr>
+          <th>Catégorie</th>
+          <th>Ressources</th>
+        </tr>
+        </thead>
+        <tbody>
+        @for (entry of entries(s.resourcesByCategory); track entry[0]) {
+        <tr>
+          <td>{{ entry[0] }}</td>
+          <td class="admin-stats-table__count">{{ entry[1] }}</td>
+        </tr>
+        }
+        </tbody>
+      </table>
+      }
+    </div>
+
+    <div class="admin-stats-section">
+      <h2 class="admin-stats-section__title">Par type</h2>
+      @if (entries(s.resourcesByType).length === 0) {
+      <p class="admin-stats-empty">Aucune donnée.</p>
+      } @else {
+      <table class="admin-stats-table">
+        <thead>
+        <tr>
+          <th>Type</th>
+          <th>Ressources</th>
+        </tr>
+        </thead>
+        <tbody>
+        @for (entry of entries(s.resourcesByType); track entry[0]) {
+        <tr>
+          <td>{{ resourceTypeLabels[entry[0]] ?? entry[0] }}</td>
+          <td class="admin-stats-table__count">{{ entry[1] }}</td>
+        </tr>
+        }
+        </tbody>
+      </table>
+      }
+    </div>
+  </div>
+
+  <div class="admin-stats-actions">
+    <button
+      mat-raised-button
+      class="export-button"
+      [disabled]="exportLoading()"
+      (click)="exportCsv()"
+    >
+      <mat-icon>download</mat-icon>
+      {{ exportLoading() ? 'Export en cours...' : 'Exporter en CSV' }}
+    </button>
+  </div>
+
+  }
+</section>

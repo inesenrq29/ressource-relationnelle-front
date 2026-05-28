@@ -1,40 +1,159 @@
+:host {
+  display: block;
+}
+
 .profile-page {
   min-height: calc(100vh - 78px);
   padding: 2rem;
-  background:
-    radial-gradient(circle at top left, rgba(142, 202, 230, 0.12), transparent 24%),
-    radial-gradient(circle at bottom right, rgba(251, 133, 0, 0.08), transparent 18%),
-    linear-gradient(180deg, #efebe7 0%, #f8f4f0 100%);
 }
 
 .profile-card {
-  max-width: 760px;
+  max-width: 980px;
   margin: 0 auto;
-  border-radius: 32px;
   padding: 2rem;
-  background: rgba(255, 255, 255, 0.84);
-  border: 1px solid rgba(2, 48, 71, 0.08);
-  box-shadow: 0 18px 40px rgba(2, 48, 71, 0.08);
+  border-radius: 30px !important;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: var(--rr-shadow);
 }
 
-.profile-kicker {
-  margin: 0 0 0.75rem;
+.profile-header {
+  margin-bottom: 1.6rem;
+}
+
+.profile-header p {
+  margin: 0 0 0.5rem;
+  color: var(--rr-orange);
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.12em;
   font-size: 0.8rem;
-  color: #fb8500;
-  font-weight: 700;
 }
 
-.profile-card h1 {
-  margin: 0 0 0.75rem;
-  color: #023047;
-  font-size: clamp(2rem, 4vw, 3rem);
+.profile-header h1 {
+  margin: 0;
+  color: var(--rr-navy);
+  font-size: clamp(2rem, 4vw, 3.2rem);
   font-weight: 400;
 }
 
-.profile-card p {
-  margin: 0;
-  line-height: 1.7;
-  color: #545454;
+.profile-header span {
+  display: block;
+  margin-top: 0.8rem;
+  color: rgba(84, 84, 84, 0.9);
+  line-height: 1.6;
+}
+
+.user-info {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.user-info div {
+  padding: 1rem;
+  border-radius: 20px;
+  background: rgba(2, 48, 71, 0.04);
+  border: 1px solid rgba(2, 48, 71, 0.08);
+}
+
+.user-info strong {
+  display: block;
+  margin-bottom: 0.4rem;
+  color: var(--rr-navy);
+}
+
+.user-info span {
+  color: rgba(84, 84, 84, 0.9);
+}
+
+.state,
+.error {
+  padding: 1rem;
+  border-radius: 18px;
+  font-weight: 700;
+}
+
+.state {
+  background: rgba(2, 48, 71, 0.05);
+  color: var(--rr-navy);
+}
+
+.error {
+  background: rgba(217, 65, 65, 0.1);
+  color: var(--rr-danger);
+}
+
+.progression-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.progression-card {
+  padding: 1.3rem;
+  border-radius: 24px !important;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(2, 48, 71, 0.08);
+  box-shadow: 0 14px 30px rgba(2, 48, 71, 0.07);
+}
+
+.progression-number {
+  display: block;
+  margin-bottom: 0.4rem;
+  color: var(--rr-orange);
+  font-size: 2.4rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.progression-card strong {
+  display: block;
+  color: var(--rr-navy);
+  font-size: 1.1rem;
+}
+
+.progression-card p {
+  margin: 0.6rem 0 0;
+  color: rgba(84, 84, 84, 0.9);
+  line-height: 1.5;
+}
+
+.profile-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.6rem;
+}
+
+.profile-actions a {
+  border-radius: 999px !important;
+  font-weight: 800;
+}
+
+.primary-button {
+  background: linear-gradient(135deg, var(--rr-yellow), var(--rr-orange)) !important;
+  color: var(--rr-navy) !important;
+}
+
+@media (max-width: 760px) {
+  .profile-page {
+    padding: 1rem;
+  }
+
+  .profile-card {
+    padding: 1.2rem;
+  }
+
+  .user-info,
+  .progression-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-actions {
+    flex-direction: column;
+  }
+
+  .profile-actions a {
+    width: 100%;
+  }
 }

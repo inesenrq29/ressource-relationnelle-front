@@ -1,36 +1,41 @@
 <section class="resources-list-page">
   <header class="resources-hero">
     <div>
-      <p class="resources-hero__eyebrow">Catalogue relationnel</p>
-      <h1>Explorer les ressources</h1>
+      <p class="resources-hero__eyebrow">Catalogue</p>
+      <h1>Ressources relationnelles</h1>
       <p>
-        Découvre des contenus pour mieux communiquer et renforcer tes liens.
+        Explore les ressources disponibles pour mieux comprendre, enrichir et
+        accompagner les relations au quotidien.
       </p>
     </div>
 
-    <a mat-raised-button class="resources-hero__cta" routerLink="/resources/add">
+    <a
+      mat-stroked-button
+      routerLink="/resources/add"
+      class="resources-hero__link"
+    >
       Proposer une ressource
     </a>
   </header>
 
-  <section class="resources-filters" aria-label="Filtres des ressources">
+  <mat-card class="resources-filters">
     <mat-form-field appearance="outline">
       <mat-label>Rechercher</mat-label>
       <input
         matInput
-        [ngModel]="search()"
-        (ngModelChange)="updateSearch($event)"
-        placeholder="Communication, famille, couple..."
+        [(ngModel)]="search"
+        placeholder="Titre, description, catégorie..."
       />
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Catégorie</mat-label>
-      <mat-select
-        [ngModel]="selectedCategoryId()"
-        (ngModelChange)="updateCategory($event)"
-      >
-        <mat-option value="">Toutes les catégories</mat-option>
+
+      <mat-select [(ngModel)]="selectedCategoryId">
+        <mat-option value="ALL">
+          Toutes catégories
+        </mat-option>
+
         <mat-option
           *ngFor="let category of categories"
           [value]="category.categoryId"
@@ -40,66 +45,48 @@
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Type</mat-label>
-      <mat-select
-        [ngModel]="selectedType()"
-        (ngModelChange)="updateType($event)"
-      >
-        <mat-option value="">Tous les types</mat-option>
-        <mat-option *ngFor="let item of resourceTypes" [value]="item.value">
-          {{ item.label }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-      <mat-label>Tri</mat-label>
-      <mat-select
-        [ngModel]="sortDirection()"
-        (ngModelChange)="updateSort($event)"
-      >
-        <mat-option value="newest">Plus récentes</mat-option>
-        <mat-option value="oldest">Plus anciennes</mat-option>
-        <mat-option value="title">Titre A-Z</mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <button mat-stroked-button type="button" (click)="resetFilters()">
+    <button
+      mat-stroked-button
+      type="button"
+      class="reset-button"
+      (click)="resetFilters()"
+    >
       Réinitialiser
     </button>
-  </section>
+  </mat-card>
 
   <div class="resources-state" *ngIf="loading">
     Chargement des ressources...
   </div>
 
-  <div class="resources-state resources-state--error" *ngIf="!loading && errorMessage">
+  <div
+    class="resources-state resources-state--error"
+    *ngIf="!loading && errorMessage"
+  >
     {{ errorMessage }}
   </div>
 
   <div
     class="resources-state"
-    *ngIf="!loading && !errorMessage && filteredResources().length === 0"
+    *ngIf="!loading && !errorMessage && filteredResources.length === 0"
   >
     Aucune ressource ne correspond à ta recherche.
   </div>
 
   <section
     class="resources-grid"
-    *ngIf="!loading && !errorMessage && filteredResources().length > 0"
+    *ngIf="!loading && !errorMessage && filteredResources.length > 0"
   >
-    <mat-card class="resource-card" *ngFor="let resource of filteredResources()">
+    <mat-card
+      class="resource-card"
+      *ngFor="let resource of filteredResources"
+    >
       <div class="resource-card__top">
         <span class="resource-card__type">
-          {{ getResourceTypeLabel(resource.resourceType) }}
+          {{ resource.resourceType }}
         </span>
 
-        <span
-          class="resource-card__status"
-          [class.resource-card__status--published]="resource.status === 'PUBLISHED'"
-          [class.resource-card__status--draft]="resource.status === 'DRAFT'"
-        >
+        <span class="resource-card__status">
           {{ resource.status }}
         </span>
       </div>
@@ -114,20 +101,16 @@
         {{ resource.resourceDescription || 'Aucune description disponible.' }}
       </p>
 
-      <div class="resource-tags" *ngIf="resource.tags.length">
+      <div class="resource-tags" *ngIf="resource.tags.length > 0">
         <span class="resource-tag" *ngFor="let tag of resource.tags">
           #{{ tag }}
         </span>
       </div>
 
-      <div class="resource-card__footer">
-        <span>
-          Créée le {{ resource.resourceCreatedAt | date: 'dd/MM/yyyy' }}
-        </span>
-
+      <div class="resource-card__actions">
         <a
-          mat-button
-          class="resource-card__link"
+          mat-raised-button
+          class="resource-detail-button"
           [routerLink]="['/resources', resource.resourceId]"
         >
           Voir le détail

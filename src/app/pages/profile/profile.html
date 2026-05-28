@@ -1,7 +1,63 @@
 <section class="profile-page">
-  <div class="profile-card">
-    <p class="profile-kicker">Profil</p>
-    <h1>Hello {{ session.user()?.pseudo }}</h1>
-    <p>Cette page pourra ensuite afficher les informations du compte utilisateur.</p>
-  </div>
+  <mat-card class="profile-card">
+    <div class="profile-header">
+      <p>Mon espace</p>
+      <h1>Bonjour {{ session.user()?.pseudo }}</h1>
+      <span>
+        Retrouve ici ta progression sur les ressources relationnelles.
+      </span>
+    </div>
+
+    <div class="user-info">
+      <div>
+        <strong>Email</strong>
+        <span>{{ session.user()?.email || 'Non renseigné' }}</span>
+      </div>
+
+      <div>
+        <strong>Rôle</strong>
+        <span>{{ session.role() || 'Utilisateur' }}</span>
+      </div>
+    </div>
+
+    @if (loading()) {
+    <p class="state">Chargement de la progression...</p>
+    }
+
+    @if (!loading() && errorMessage()) {
+    <p class="error">{{ errorMessage() }}</p>
+    }
+
+    @if (!loading()) {
+    <div class="progression-grid">
+      <mat-card class="progression-card">
+        <span class="progression-number">{{ progression().favoritesCount }}</span>
+        <strong>Favorites</strong>
+        <p>Ressources ajoutées à tes favoris.</p>
+      </mat-card>
+
+      <mat-card class="progression-card">
+        <span class="progression-number">{{ progression().setAsideCount }}</span>
+        <strong>Mises de côté</strong>
+        <p>Ressources gardées pour plus tard.</p>
+      </mat-card>
+
+      <mat-card class="progression-card">
+        <span class="progression-number">{{ progression().exploitedCount }}</span>
+        <strong>Exploitées</strong>
+        <p>Ressources que tu as déjà utilisées.</p>
+      </mat-card>
+    </div>
+    }
+
+    <div class="profile-actions">
+      <a mat-raised-button routerLink="/resources" class="primary-button">
+        Explorer les ressources
+      </a>
+
+      <a mat-stroked-button routerLink="/resources/add">
+        Proposer une ressource
+      </a>
+    </div>
+  </mat-card>
 </section>

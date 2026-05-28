@@ -44,6 +44,14 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'resources/:resourceId/edit',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./pages/resource-edit/resource-edit').then(
+        (m) => m.ResourceEditComponent,
+      ),
+  },
+  {
     path: 'resources/:resourceId',
     loadComponent: () =>
       import('./pages/resource-detail/resource-detail').then(
@@ -65,6 +73,17 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/admin-resources/admin-resources').then(
         (m) => m.AdminResourcesComponent,
+      ),
+  },
+  {
+    path: 'admin/stats',
+    canActivate: [authGuard, roleGuard],
+    data: {
+      roles: ['ADMIN', 'SUPER_ADMIN'],
+    },
+    loadComponent: () =>
+      import('./pages/admin-stats/admin-stats').then(
+        (m) => m.AdminStatsComponent,
       ),
   },
   {
