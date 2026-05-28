@@ -19,6 +19,8 @@ export type ResourceType =
   | 'GAME'
   | 'VIDEO';
 
+export type CommentStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
+
 export interface CategoryDto {
   categoryId: string;
   name: string;
@@ -70,6 +72,17 @@ export interface CreateCommentRequest {
   commentsContent: string;
 }
 
+export interface CommentDto {
+  commentsId: string;
+  publicationDate: string;
+  modificationCommentsDate?: string;
+  author: string;
+  titleComments?: string;
+  commentsContent: string;
+  resourceId: string;
+  status: CommentStatus;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -94,11 +107,13 @@ export class ResourceService {
 
   filterResources(filter: string): Observable<ResourceDto[]> {
     const params = new HttpParams().set('filter', filter);
+
     return this.http.get<ResourceDto[]>(`${this.baseUrl}/filter`, { params });
   }
 
   sortResources(isAscending: boolean): Observable<ResourceDto[]> {
     const params = new HttpParams().set('isAscending', isAscending);
+
     return this.http.get<ResourceDto[]>(`${this.baseUrl}/sorted`, { params });
   }
 
@@ -158,12 +173,16 @@ export class ResourceService {
     return this.http.delete<void>(`${this.baseUrl}/${userId}/exploited/${resourceId}`);
   }
 
+  getCommentsByResource(resourceId: string): Observable<CommentDto[]> {
+    return this.http.get<CommentDto[]>(`${this.commentsUrl}/resources/${resourceId}`);
+  }
+
   addComment(
     userId: string,
     resourceId: string,
     payload: CreateCommentRequest,
-  ): Observable<void> {
-    return this.http.post<void>(
+  ): Observable<CommentDto> {
+    return this.http.post<CommentDto>(
       `${this.commentsUrl}/${userId}/resources/${resourceId}`,
       payload,
     );

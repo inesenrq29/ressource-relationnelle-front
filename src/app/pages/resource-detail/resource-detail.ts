@@ -6,6 +6,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 
 import {
+  CommentDto,
   ResourceDto,
   ResourceService,
   ResourceType,
@@ -28,6 +29,10 @@ export class ResourceDetailComponent implements OnInit {
   errorMessage = signal('');
   resource = signal<ResourceDto | null>(null);
 
+  comments = signal<CommentDto[]>([]);
+  commentsLoading = signal(false);
+  commentsError = signal('');
+
   isFavorite = signal(false);
   isSetAside = signal(false);
   isExploited = signal(false);
@@ -41,11 +46,32 @@ export class ResourceDetailComponent implements OnInit {
   commentSuccess = signal('');
   commentError = signal('');
 
+  readonly approvedComments = computed(() =>
+    [...this.comments()]
+      .filter((comment) => comment.status === 'APPROVED')
+      .sort(
+        (first, second) =>
+          new Date(second.publicationDate).getTime() - new Date(first.publicationDate).getTime(),
+      ),
+  );
+
+  readonly commentsCountLabel = computed(() => {
+    const count = this.approvedComments().length;
+
+    if (count === 0) return 'Aucun commentaire publié';
+    if (count === 1) return '1 commentaire publié';
+
+    return `${count} commentaires publiés`;
+  });
+
   readonly canEdit = computed(() => {
     if (!this.session.isLoggedIn()) return false;
     if (this.session.isAdmin()) return true;
+
     const res = this.resource();
+
     if (!res?.creatorId) return false;
+
     return res.creatorId === this.session.user()?.id;
   });
 
@@ -62,12 +88,15 @@ export class ResourceDetailComponent implements OnInit {
 
   ngOnInit(): void {
     const resourceId = this.route.snapshot.paramMap.get('resourceId');
+
     if (!resourceId) {
       this.loading.set(false);
       this.errorMessage.set('Identifiant de ressource introuvable.');
       return;
     }
+
     this.loadResource(resourceId);
+    this.loadComments(resourceId);
   }
 
   copyLink(): void {
@@ -80,6 +109,7 @@ export class ResourceDetailComponent implements OnInit {
   toggleFavorite(): void {
     const userId = this.session.user()?.id;
     const resourceId = this.resource()?.resourceId;
+
     if (!userId || !resourceId || this.actionLoading()) return;
 
     this.actionLoading.set(true);
@@ -89,14 +119,20 @@ export class ResourceDetailComponent implements OnInit {
       : this.resourceService.addResourceToFavorite(userId, resourceId);
 
     call.subscribe({
-      next: () => { this.isFavorite.set(!was); this.actionLoading.set(false); },
-      error: () => { this.actionLoading.set(false); },
+      next: () => {
+        this.isFavorite.set(!was);
+        this.actionLoading.set(false);
+      },
+      error: () => {
+        this.actionLoading.set(false);
+      },
     });
   }
 
   toggleSetAside(): void {
     const userId = this.session.user()?.id;
     const resourceId = this.resource()?.resourceId;
+
     if (!userId || !resourceId || this.actionLoading()) return;
 
     this.actionLoading.set(true);
@@ -106,14 +142,20 @@ export class ResourceDetailComponent implements OnInit {
       : this.resourceService.setAsideResource(userId, resourceId);
 
     call.subscribe({
-      next: () => { this.isSetAside.set(!was); this.actionLoading.set(false); },
-      error: () => { this.actionLoading.set(false); },
+      next: () => {
+        this.isSetAside.set(!was);
+        this.actionLoading.set(false);
+      },
+      error: () => {
+        this.actionLoading.set(false);
+      },
     });
   }
 
   toggleExploited(): void {
     const userId = this.session.user()?.id;
     const resourceId = this.resource()?.resourceId;
+
     if (!userId || !resourceId || this.actionLoading()) return;
 
     this.actionLoading.set(true);
@@ -123,8 +165,13 @@ export class ResourceDetailComponent implements OnInit {
       : this.resourceService.markResourceAsExploited(userId, resourceId);
 
     call.subscribe({
-      next: () => { this.isExploited.set(!was); this.actionLoading.set(false); },
-      error: () => { this.actionLoading.set(false); },
+      next: () => {
+        this.isExploited.set(!was);
+        this.actionLoading.set(false);
+      },
+      error: () => {
+        this.actionLoading.set(false);
+      },
     });
   }
 
@@ -141,25 +188,37 @@ export class ResourceDetailComponent implements OnInit {
 
     const title = this.commentTitle().trim();
 
-    this.resourceService.addComment(userId, resourceId, {
-      ...(title ? { titleComments: title } : {}),
-      commentsContent: content,
-    }).subscribe({
-      next: () => {
-        this.commentTitle.set('');
-        this.commentContent.set('');
-        this.commentSuccess.set('Votre commentaire est en attente de modération.');
-        this.commentSubmitting.set(false);
-      },
-      error: () => {
-        this.commentError.set('Impossible de publier le commentaire. Réessayez plus tard.');
-        this.commentSubmitting.set(false);
-      },
-    });
+    this.resourceService
+      .addComment(userId, resourceId, {
+        ...(title ? { titleComments: title } : {}),
+        commentsContent: content,
+      })
+      .subscribe({
+        next: () => {
+          this.commentTitle.set('');
+          this.commentContent.set('');
+          this.commentSuccess.set('Votre commentaire est en attente de modération.');
+          this.commentSubmitting.set(false);
+          this.loadComments(resourceId);
+        },
+        error: () => {
+          this.commentError.set('Impossible de publier le commentaire. Réessayez plus tard.');
+          this.commentSubmitting.set(false);
+        },
+      });
+  }
+
+  reloadComments(): void {
+    const resourceId = this.resource()?.resourceId;
+
+    if (!resourceId) return;
+
+    this.loadComments(resourceId);
   }
 
   getResourceTypeLabel(type: ResourceType | string | null | undefined): string {
     if (!type) return 'Type non renseigné';
+
     return this.resourceTypeLabels[type] ?? type;
   }
 
@@ -171,7 +230,12 @@ export class ResourceDetailComponent implements OnInit {
       RESTRICTED: 'Restreint',
       ARCHIVED: 'Archivé',
     };
-    return status ? labels[status] ?? status : 'Statut inconnu';
+
+    return status ? (labels[status] ?? status) : 'Statut inconnu';
+  }
+
+  getAuthorInitial(author: string): string {
+    return author.trim().charAt(0).toUpperCase() || '?';
   }
 
   private loadResource(resourceId: string): void {
@@ -186,6 +250,22 @@ export class ResourceDetailComponent implements OnInit {
       error: () => {
         this.errorMessage.set('Impossible de charger cette ressource.');
         this.loading.set(false);
+      },
+    });
+  }
+
+  private loadComments(resourceId: string): void {
+    this.commentsLoading.set(true);
+    this.commentsError.set('');
+
+    this.resourceService.getCommentsByResource(resourceId).subscribe({
+      next: (comments) => {
+        this.comments.set(comments ?? []);
+        this.commentsLoading.set(false);
+      },
+      error: () => {
+        this.commentsError.set('Impossible de charger les commentaires.');
+        this.commentsLoading.set(false);
       },
     });
   }
