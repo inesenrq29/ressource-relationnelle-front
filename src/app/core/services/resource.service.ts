@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 
 export type ResourceStatus =
   | 'DRAFT'
@@ -146,7 +146,31 @@ export class ResourceService {
   }
 
   getProgression(userId: string): Observable<ProgressionDto> {
-    return this.http.get<ProgressionDto>(`${this.baseUrl}/${userId}/progressions`);
+    return this.http
+      .get(`${this.baseUrl}/${userId}/progressions`, {
+        responseType: 'text',
+      })
+      .pipe(
+        map((response) => {
+          if (!response) {
+            return {
+              favoritesCount: 0,
+              exploitedCount: 0,
+              setAsideCount: 0,
+            };
+          }
+
+          try {
+            return JSON.parse(response) as ProgressionDto;
+          } catch {
+            return {
+              favoritesCount: 0,
+              exploitedCount: 0,
+              setAsideCount: 0,
+            };
+          }
+        }),
+      );
   }
 
   addResourceToFavorite(userId: string, resourceId: string): Observable<void> {

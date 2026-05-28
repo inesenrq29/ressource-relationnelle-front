@@ -11,6 +11,7 @@ import {
   ResourceService,
   ResourceType,
 } from '../../core/services/resource.service';
+import { ProfileResourceLibraryService } from '../../core/services/profile-resource-library.service';
 import { SessionService } from '../../core/services/session.service';
 
 @Component({
@@ -23,6 +24,8 @@ import { SessionService } from '../../core/services/session.service';
 export class ResourceDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly resourceService = inject(ResourceService);
+  private readonly profileResourceLibrary = inject(ProfileResourceLibraryService);
+
   protected readonly session = inject(SessionService);
 
   loading = signal(true);
@@ -107,20 +110,35 @@ export class ResourceDetailComponent implements OnInit {
   }
 
   toggleFavorite(): void {
-    const userId = this.session.user()?.id;
-    const resourceId = this.resource()?.resourceId;
+    const userKey = this.getCurrentUserStorageKey();
+    const currentResource = this.resource();
 
-    if (!userId || !resourceId || this.actionLoading()) return;
+    if (!userKey || !currentResource || this.actionLoading()) return;
 
     this.actionLoading.set(true);
-    const was = this.isFavorite();
-    const call = was
-      ? this.resourceService.removeResourceFromFavorite(userId, resourceId)
-      : this.resourceService.addResourceToFavorite(userId, resourceId);
 
-    call.subscribe({
+    const wasFavorite = this.isFavorite();
+
+    if (wasFavorite) {
+      this.profileResourceLibrary.remove(userKey, 'favorite', currentResource.resourceId);
+    } else {
+      this.profileResourceLibrary.add(userKey, 'favorite', currentResource);
+    }
+
+    this.isFavorite.set(!wasFavorite);
+
+    const apiUserId = this.session.user()?.id;
+    if (!apiUserId) {
+      this.actionLoading.set(false);
+      return;
+    }
+
+    const request = wasFavorite
+      ? this.resourceService.removeResourceFromFavorite(apiUserId, currentResource.resourceId)
+      : this.resourceService.addResourceToFavorite(apiUserId, currentResource.resourceId);
+
+    request.subscribe({
       next: () => {
-        this.isFavorite.set(!was);
         this.actionLoading.set(false);
       },
       error: () => {
@@ -130,20 +148,35 @@ export class ResourceDetailComponent implements OnInit {
   }
 
   toggleSetAside(): void {
-    const userId = this.session.user()?.id;
-    const resourceId = this.resource()?.resourceId;
+    const userKey = this.getCurrentUserStorageKey();
+    const currentResource = this.resource();
 
-    if (!userId || !resourceId || this.actionLoading()) return;
+    if (!userKey || !currentResource || this.actionLoading()) return;
 
     this.actionLoading.set(true);
-    const was = this.isSetAside();
-    const call = was
-      ? this.resourceService.unsetAsideResource(userId, resourceId)
-      : this.resourceService.setAsideResource(userId, resourceId);
 
-    call.subscribe({
+    const wasSetAside = this.isSetAside();
+
+    if (wasSetAside) {
+      this.profileResourceLibrary.remove(userKey, 'set-aside', currentResource.resourceId);
+    } else {
+      this.profileResourceLibrary.add(userKey, 'set-aside', currentResource);
+    }
+
+    this.isSetAside.set(!wasSetAside);
+
+    const apiUserId = this.session.user()?.id;
+    if (!apiUserId) {
+      this.actionLoading.set(false);
+      return;
+    }
+
+    const request = wasSetAside
+      ? this.resourceService.unsetAsideResource(apiUserId, currentResource.resourceId)
+      : this.resourceService.setAsideResource(apiUserId, currentResource.resourceId);
+
+    request.subscribe({
       next: () => {
-        this.isSetAside.set(!was);
         this.actionLoading.set(false);
       },
       error: () => {
@@ -153,20 +186,35 @@ export class ResourceDetailComponent implements OnInit {
   }
 
   toggleExploited(): void {
-    const userId = this.session.user()?.id;
-    const resourceId = this.resource()?.resourceId;
+    const userKey = this.getCurrentUserStorageKey();
+    const currentResource = this.resource();
 
-    if (!userId || !resourceId || this.actionLoading()) return;
+    if (!userKey || !currentResource || this.actionLoading()) return;
 
     this.actionLoading.set(true);
-    const was = this.isExploited();
-    const call = was
-      ? this.resourceService.markResourceAsUnexploited(userId, resourceId)
-      : this.resourceService.markResourceAsExploited(userId, resourceId);
 
-    call.subscribe({
+    const wasExploited = this.isExploited();
+
+    if (wasExploited) {
+      this.profileResourceLibrary.remove(userKey, 'exploited', currentResource.resourceId);
+    } else {
+      this.profileResourceLibrary.add(userKey, 'exploited', currentResource);
+    }
+
+    this.isExploited.set(!wasExploited);
+
+    const apiUserId = this.session.user()?.id;
+    if (!apiUserId) {
+      this.actionLoading.set(false);
+      return;
+    }
+
+    const request = wasExploited
+      ? this.resourceService.markResourceAsUnexploited(apiUserId, currentResource.resourceId)
+      : this.resourceService.markResourceAsExploited(apiUserId, currentResource.resourceId);
+
+    request.subscribe({
       next: () => {
-        this.isExploited.set(!was);
         this.actionLoading.set(false);
       },
       error: () => {
@@ -244,7 +292,29 @@ export class ResourceDetailComponent implements OnInit {
 
     this.resourceService.getResourceById(resourceId).subscribe({
       next: (resource) => {
-        this.resource.set({ ...resource, tags: resource.tags ?? [] });
+        const normalizedResource: ResourceDto = {
+          ...resource,
+          tags: resource.tags ?? [],
+        };
+
+        const userKey = this.getCurrentUserStorageKey();
+
+        this.resource.set(normalizedResource);
+
+        if (userKey) {
+          this.isFavorite.set(
+            this.profileResourceLibrary.has(userKey, 'favorite', normalizedResource.resourceId),
+          );
+
+          this.isSetAside.set(
+            this.profileResourceLibrary.has(userKey, 'set-aside', normalizedResource.resourceId),
+          );
+
+          this.isExploited.set(
+            this.profileResourceLibrary.has(userKey, 'exploited', normalizedResource.resourceId),
+          );
+        }
+
         this.loading.set(false);
       },
       error: () => {
@@ -268,5 +338,11 @@ export class ResourceDetailComponent implements OnInit {
         this.commentsLoading.set(false);
       },
     });
+  }
+
+  private getCurrentUserStorageKey(): string | null {
+    const user = this.session.user();
+
+    return user?.id ?? user?.email ?? user?.pseudo ?? null;
   }
 }

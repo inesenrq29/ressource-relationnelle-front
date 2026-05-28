@@ -90,7 +90,7 @@
         {{ errorMessage }}
       </div>
 
-      <button class="primary-btn" type="submit" [disabled]="loading || form.invalid">
+      <button class="primary-btn" type="submit" [disabled]="loading">
         {{ loading ? 'Connexion en cours…' : 'Se connecter' }}
       </button>
     </form>

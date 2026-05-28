@@ -4,7 +4,7 @@
     <span class="navbar-brand__text">Ressources Relationnelles</span>
   </a>
 
-  <nav class="navbar-links">
+  <nav class="navbar-links" aria-label="Navigation principale">
     <a
       mat-button
       routerLink="/"
@@ -18,16 +18,20 @@
       mat-button
       type="button"
       class="menu-button"
+      aria-label="Ouvrir le menu des ressources"
       [matMenuTriggerFor]="resourcesMenu"
     >
       Ressources
       <mat-icon>expand_more</mat-icon>
     </button>
 
+    <a mat-button routerLink="/aide" routerLinkActive="active-link">Aide</a>
+
     <button
       mat-button
       type="button"
       class="menu-button admin-menu-button"
+      aria-label="Ouvrir le menu d’administration"
       *ngIf="canSeeAdminMenu()"
       [matMenuTriggerFor]="adminMenu"
     >
@@ -42,19 +46,13 @@
         <span>Hello {{ session.user()?.pseudo }} !</span>
       </button>
 
-      <button mat-stroked-button type="button" (click)="logout()">
-        Déconnexion
-      </button>
+      <button mat-stroked-button type="button" (click)="logout()">Déconnexion</button>
     </ng-container>
 
     <ng-template #guestActions>
-      <a mat-button routerLink="/login">
-        Connexion
-      </a>
+      <a mat-button routerLink="/login">Connexion</a>
 
-      <a mat-raised-button routerLink="/register" class="register-button">
-        Inscription
-      </a>
+      <a mat-raised-button routerLink="/register" class="register-button">Inscription</a>
     </ng-template>
   </div>
 </mat-toolbar>
@@ -65,28 +63,24 @@
     <span>Voir le catalogue</span>
   </button>
 
-  <button
-    mat-menu-item
-    routerLink="/resources/add"
-    *ngIf="session.isLoggedIn()"
-  >
+  <button mat-menu-item routerLink="/resources/add" *ngIf="session.isLoggedIn()">
     <mat-icon>add_circle</mat-icon>
     <span>Ajouter une ressource</span>
   </button>
 </mat-menu>
 
 <mat-menu #adminMenu="matMenu">
-  <button mat-menu-item routerLink="/admin/resources">
+  <button mat-menu-item routerLink="/admin/resources" *ngIf="canManageResources()">
     <mat-icon>admin_panel_settings</mat-icon>
     <span>Gestion des ressources</span>
   </button>
 
-  <button mat-menu-item routerLink="/resources/categories/add">
+  <button mat-menu-item routerLink="/resources/categories/add" *ngIf="canManageCategories()">
     <mat-icon>category</mat-icon>
     <span>Ajouter une catégorie</span>
   </button>
 
-  <button mat-menu-item routerLink="/admin/stats" *ngIf="session.isAdmin()">
+  <button mat-menu-item routerLink="/admin/stats" *ngIf="canSeeStats()">
     <mat-icon>bar_chart</mat-icon>
     <span>Statistiques</span>
   </button>

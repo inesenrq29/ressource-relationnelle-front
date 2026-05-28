@@ -1,21 +1,23 @@
 <main class="landing-page" aria-label="Accueil">
   <section class="hero" #revealBlock>
     <div class="hero__content">
-      <p class="eyebrow">Prends soin de toi à travers tes relations </p>
+      <p class="eyebrow">Prends soin de toi à travers tes relations</p>
 
       <h1>Des ressources qui préservent les relations, le partage et le bien-être</h1>
 
       <p class="hero__description">
-        Explore des contenus utiles, humains et accessibles pour mieux te comprendre, comprendre tes relations et découvrir de nouvelles pratiques.</p>
+        Explore des contenus utiles, humains et accessibles pour mieux te comprendre, comprendre
+        tes relations et découvrir de nouvelles pratiques.
+      </p>
 
       <div class="hero__actions">
-        <button mat-raised-button class="btn-primary" type="button">
+        <a mat-raised-button routerLink="/resources" class="btn-primary">
           Découvrir les ressources
-        </button>
+        </a>
 
-        <button mat-stroked-button class="btn-secondary" type="button">
+        <a mat-stroked-button routerLink="/aide" class="btn-secondary">
           En savoir plus
-        </button>
+        </a>
       </div>
 
       <ul class="hero__highlights" aria-label="Points clés">
@@ -24,19 +26,23 @@
         <li>Partager du contenu avec tes relations</li>
       </ul>
     </div>
+
     <aside class="hero__panel" aria-label="Aperçu de la plateforme">
       <span></span>
+
       <div class="hero-card hero-card--accent">
         <span class="hero-card__label">Expérience</span>
         <strong>Simple et intuitive</strong>
         <p>
-          Une plateforme pensée pour découvrir, conserver et partager des ressources autour des liens relationnels.</p>
+          Une plateforme pensée pour découvrir, conserver et partager des ressources autour des
+          liens relationnels.
+        </p>
       </div>
 
       <div class="hero-stats">
         <div class="hero-card">
-          <span class="hero-card__label">Format de ressources disponibles</span>
-          <strong>6 formats disponibles pour l'instant ! </strong>
+          <span class="hero-card__label">Formats de ressources disponibles</span>
+          <strong>6 formats disponibles pour l’instant !</strong>
         </div>
 
         <div class="hero-card">
@@ -45,8 +51,7 @@
         </div>
       </div>
 
-
-        <span></span>
+      <span></span>
     </aside>
   </section>
 
@@ -67,8 +72,8 @@
       <p class="eyebrow">Explorer</p>
       <h2>Des types de contenu pensés pour différents usages</h2>
       <p>
-        Chaque format répond à une manière différente d’apprendre, de réfléchir, de pratiquer ou
-        de revenir plus tard sur une ressource.
+        Chaque format répond à une manière différente d’apprendre, de réfléchir, de pratiquer ou de
+        revenir plus tard sur une ressource.
       </p>
     </div>
 
@@ -91,9 +96,9 @@
           </ul>
         </div>
 
-        <button mat-button class="resource-card__link" type="button">
+        <a mat-button routerLink="/resources" class="resource-card__link">
           Accéder
-        </button>
+        </a>
       </mat-card>
     </div>
   </section>

@@ -1,10 +1,12 @@
-<section class="profile-page">
+<section class="profile-page" aria-labelledby="profile-title">
   <mat-card class="profile-card">
     <div class="profile-header">
       <p>Mon espace</p>
-      <h1>Bonjour {{ session.user()?.pseudo }}</h1>
+
+      <h1 id="profile-title">Bonjour {{ session.user()?.pseudo }}</h1>
+
       <span>
-        Retrouve ici ta progression sur les ressources relationnelles.
+        Retrouve ici ton profil, ta progression et tes ressources sauvegardées.
       </span>
     </div>
 
@@ -30,23 +32,29 @@
 
     @if (!loading()) {
     <div class="progression-grid">
-      <mat-card class="progression-card">
-        <span class="progression-number">{{ progression().favoritesCount }}</span>
-        <strong>Favorites</strong>
-        <p>Ressources ajoutées à tes favoris.</p>
-      </mat-card>
+      <a routerLink="/profile/favorites" class="progression-card-link">
+        <mat-card class="progression-card">
+          <span class="progression-number">{{ progression().favoritesCount }}</span>
+          <strong>Favorites</strong>
+          <p>Voir les ressources ajoutées à tes favoris.</p>
+        </mat-card>
+      </a>
 
-      <mat-card class="progression-card">
-        <span class="progression-number">{{ progression().setAsideCount }}</span>
-        <strong>Mises de côté</strong>
-        <p>Ressources gardées pour plus tard.</p>
-      </mat-card>
+      <a routerLink="/profile/set-aside" class="progression-card-link">
+        <mat-card class="progression-card">
+          <span class="progression-number">{{ progression().setAsideCount }}</span>
+          <strong>Mises de côté</strong>
+          <p>Voir les ressources gardées pour plus tard.</p>
+        </mat-card>
+      </a>
 
-      <mat-card class="progression-card">
-        <span class="progression-number">{{ progression().exploitedCount }}</span>
-        <strong>Exploitées</strong>
-        <p>Ressources que tu as déjà utilisées.</p>
-      </mat-card>
+      <a routerLink="/profile/exploited" class="progression-card-link">
+        <mat-card class="progression-card">
+          <span class="progression-number">{{ progression().exploitedCount }}</span>
+          <strong>Exploitées</strong>
+          <p>Voir les ressources que tu as déjà utilisées.</p>
+        </mat-card>
+      </a>
     </div>
     }
 
