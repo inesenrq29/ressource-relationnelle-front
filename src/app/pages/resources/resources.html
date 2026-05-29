@@ -14,6 +14,7 @@
 
         <mat-form-field appearance="outline">
           <mat-label>Catégorie</mat-label>
+
           <mat-select formControlName="categoryId">
             @for (category of categories(); track category.categoryId) {
             <mat-option [value]="category.categoryId">
@@ -27,10 +28,17 @@
           }
         </mat-form-field>
 
-        @if (categories().length === 0) {
+        @if (categories().length === 0 && canCreateCategory()) {
         <a mat-button routerLink="/resources/categories/add">
           Créer une catégorie
         </a>
+        }
+
+        @if (categories().length === 0 && !canCreateCategory()) {
+        <p class="category-help">
+          Aucune catégorie disponible pour le moment. Un administrateur doit créer une catégorie
+          avant de pouvoir proposer une ressource.
+        </p>
         }
       </div>
 
@@ -39,6 +47,7 @@
 
         <mat-form-field appearance="outline">
           <mat-label>Type</mat-label>
+
           <mat-select formControlName="resourceType">
             @for (type of resourceTypes; track type.value) {
             <mat-option [value]="type.value">
@@ -58,6 +67,7 @@
 
         <mat-form-field appearance="outline">
           <mat-label>Titre</mat-label>
+
           <input
             matInput
             formControlName="resourceTitle"
@@ -75,6 +85,7 @@
 
         <mat-form-field appearance="outline">
           <mat-label>Description</mat-label>
+
           <textarea
             matInput
             rows="4"
@@ -85,11 +96,13 @@
 
         <mat-form-field appearance="outline">
           <mat-label>Tags</mat-label>
+
           <input
             matInput
             formControlName="tagsRaw"
             placeholder="bien-être, communication, famille"
           />
+
           <mat-hint>Sépare les tags par des virgules.</mat-hint>
         </mat-form-field>
       </div>
@@ -99,6 +112,7 @@
         @if (errorMessage()) {
         <p class="error">{{ errorMessage() }}</p>
         }
+
         @if (successMessage()) {
         <p class="success">{{ successMessage() }}</p>
         }

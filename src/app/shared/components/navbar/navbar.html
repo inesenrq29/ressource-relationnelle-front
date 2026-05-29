@@ -1,6 +1,5 @@
 <mat-toolbar class="navbar">
   <a routerLink="/" class="navbar-brand">
-    <span class="navbar-brand__logo">RR</span>
     <span class="navbar-brand__text">Ressources Relationnelles</span>
   </a>
 
@@ -59,29 +58,32 @@
 
 <mat-menu #resourcesMenu="matMenu">
   <button mat-menu-item routerLink="/resources">
-    <mat-icon>library_books</mat-icon>
     <span>Voir le catalogue</span>
   </button>
 
   <button mat-menu-item routerLink="/resources/add" *ngIf="session.isLoggedIn()">
-    <mat-icon>add_circle</mat-icon>
     <span>Ajouter une ressource</span>
   </button>
 </mat-menu>
 
 <mat-menu #adminMenu="matMenu">
   <button mat-menu-item routerLink="/admin/resources" *ngIf="canManageResources()">
-    <mat-icon>admin_panel_settings</mat-icon>
     <span>Gestion des ressources</span>
   </button>
 
+  <button mat-menu-item routerLink="/admin/comments" *ngIf="canManageResources()">
+    <span>Modération des commentaires</span>
+  </button>
+
+  <button mat-menu-item routerLink="/admin/users" *ngIf="canManageUsers()">
+    <span>Gestion des utilisateurs</span>
+  </button>
+
   <button mat-menu-item routerLink="/resources/categories/add" *ngIf="canManageCategories()">
-    <mat-icon>category</mat-icon>
     <span>Ajouter une catégorie</span>
   </button>
 
   <button mat-menu-item routerLink="/admin/stats" *ngIf="canSeeStats()">
-    <mat-icon>bar_chart</mat-icon>
     <span>Statistiques</span>
   </button>
 </mat-menu>

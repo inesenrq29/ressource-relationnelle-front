@@ -87,28 +87,31 @@ export class ResourcesListComponent implements OnInit {
   get filteredResources(): ResourceDto[] {
     const searchValue = this.search.trim().toLowerCase();
 
-    const filtered = this.resources.filter((resource) => {
-      const title = (resource.resourceTitle ?? '').toLowerCase();
-      const description = (resource.resourceDescription ?? '').toLowerCase();
-      const categoryName = (resource.categoryName ?? '').toLowerCase();
-      const typeLabel = this.getTypeLabel(resource.resourceType).toLowerCase();
-      const tags = resource.tags ?? [];
+    const filtered = this.resources
+      .filter((resource) => resource.status === 'PUBLISHED' && resource.resourceIsActive)
+      .filter((resource) => {
+        const title = (resource.resourceTitle ?? '').toLowerCase();
+        const description = (resource.resourceDescription ?? '').toLowerCase();
+        const categoryName = (resource.categoryName ?? '').toLowerCase();
+        const typeLabel = this.getTypeLabel(resource.resourceType).toLowerCase();
+        const tags = resource.tags ?? [];
 
-      const matchesSearch =
-        !searchValue ||
-        title.includes(searchValue) ||
-        description.includes(searchValue) ||
-        categoryName.includes(searchValue) ||
-        typeLabel.includes(searchValue) ||
-        tags.some((tag) => tag.toLowerCase().includes(searchValue));
+        const matchesSearch =
+          !searchValue ||
+          title.includes(searchValue) ||
+          description.includes(searchValue) ||
+          categoryName.includes(searchValue) ||
+          typeLabel.includes(searchValue) ||
+          tags.some((tag) => tag.toLowerCase().includes(searchValue));
 
-      const matchesCategory =
-        this.selectedCategoryId === 'ALL' || resource.categoryId === this.selectedCategoryId;
+        const matchesCategory =
+          this.selectedCategoryId === 'ALL' || resource.categoryId === this.selectedCategoryId;
 
-      const matchesType = this.selectedType === 'ALL' || resource.resourceType === this.selectedType;
+        const matchesType =
+          this.selectedType === 'ALL' || resource.resourceType === this.selectedType;
 
-      return matchesSearch && matchesCategory && matchesType;
-    });
+        return matchesSearch && matchesCategory && matchesType;
+      });
 
     return this.sortFilteredResources(filtered);
   }
@@ -117,14 +120,14 @@ export class ResourcesListComponent implements OnInit {
     const count = this.filteredResources.length;
 
     if (count === 0) {
-      return 'Aucune ressource trouvée';
+      return 'Aucune ressource publiée trouvée';
     }
 
     if (count === 1) {
-      return '1 ressource trouvée';
+      return '1 ressource publiée trouvée';
     }
 
-    return `${count} ressources trouvées`;
+    return `${count} ressources publiées trouvées`;
   }
 
   resetFilters(): void {

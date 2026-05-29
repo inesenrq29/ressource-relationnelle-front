@@ -32,10 +32,10 @@ export class ProfileResourceListComponent implements OnInit {
   readonly countLabel = computed(() => {
     const count = this.resources().length;
 
-    if (count === 0) return 'Aucune ressource';
-    if (count === 1) return '1 ressource';
+    if (count === 0) return 'Aucune ressource publiée';
+    if (count === 1) return '1 ressource publiée';
 
-    return `${count} ressources`;
+    return `${count} ressources publiées`;
   });
 
   readonly resourceTypeLabels: Record<string, string> = {
@@ -75,7 +75,11 @@ export class ProfileResourceListComponent implements OnInit {
       return;
     }
 
-    this.resources.set(this.library.list(userKey, this.kind()));
+    const publishedResources = this.library
+      .list(userKey, this.kind())
+      .filter((resource) => resource.status === 'PUBLISHED' && resource.resourceIsActive);
+
+    this.resources.set(publishedResources);
   }
 
   private getCurrentUserStorageKey(): string | null {

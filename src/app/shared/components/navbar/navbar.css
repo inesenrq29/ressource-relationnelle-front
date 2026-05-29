@@ -22,19 +22,6 @@
   white-space: nowrap;
 }
 
-.navbar-brand__logo {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 42px;
-  height: 42px;
-  border-radius: 16px;
-  background: linear-gradient(135deg, var(--rr-yellow), var(--rr-orange));
-  color: var(--rr-navy);
-  font-weight: 900;
-  box-shadow: 0 12px 24px rgba(251, 133, 0, 0.18);
-}
-
 .navbar-brand__text {
   font-size: 1rem;
   letter-spacing: -0.02em;

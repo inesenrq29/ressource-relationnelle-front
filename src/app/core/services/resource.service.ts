@@ -83,6 +83,11 @@ export interface CommentDto {
   status: CommentStatus;
 }
 
+export interface ModerateCommentRequest {
+  status: 'APPROVED' | 'REJECTED';
+  moderationReason?: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -210,5 +215,20 @@ export class ResourceService {
       `${this.commentsUrl}/${userId}/resources/${resourceId}`,
       payload,
     );
+  }
+
+  getCommentsForModeration(status: CommentStatus | 'ALL' = 'PENDING'): Observable<CommentDto[]> {
+    const options =
+      status === 'ALL'
+        ? {}
+        : {
+            params: new HttpParams().set('status', status),
+          };
+
+    return this.http.get<CommentDto[]>(`${this.commentsUrl}/moderation`, options);
+  }
+
+  moderateComment(commentsId: string, payload: ModerateCommentRequest): Observable<CommentDto> {
+    return this.http.patch<CommentDto>(`${this.commentsUrl}/${commentsId}/moderate`, payload);
   }
 }

@@ -14,6 +14,7 @@ import {
   ResourceService,
   ResourceType,
 } from '../../core/services/resource.service';
+import { SessionService } from '../../core/services/session.service';
 
 @Component({
   selector: 'app-resources',
@@ -34,6 +35,7 @@ import {
 export class ResourcesComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly resourceService = inject(ResourceService);
+  protected readonly session = inject(SessionService);
 
   categories = signal<CategoryDto[]>([]);
 
@@ -62,6 +64,12 @@ export class ResourcesComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadCategories();
+  }
+
+  canCreateCategory(): boolean {
+    const role = this.session.role();
+
+    return role === 'ADMIN' || role === 'SUPER_ADMIN';
   }
 
   submit(): void {
@@ -100,9 +108,7 @@ export class ResourcesComponent implements OnInit {
       },
       error: (error) => {
         this.loading.set(false);
-        this.errorMessage.set(
-          error?.error?.message || 'Impossible de créer la ressource.'
-        );
+        this.errorMessage.set(error?.error?.message || 'Impossible de créer la ressource.');
       },
     });
   }

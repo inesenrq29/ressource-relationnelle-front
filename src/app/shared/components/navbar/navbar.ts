@@ -31,7 +31,12 @@ export class Navbar {
   private readonly router = inject(Router);
 
   canSeeAdminMenu(): boolean {
-    return this.canManageResources() || this.canManageCategories() || this.canSeeStats();
+    return (
+      this.canManageResources() ||
+      this.canManageCategories() ||
+      this.canManageUsers() ||
+      this.canSeeStats()
+    );
   }
 
   canManageResources(): boolean {
@@ -44,6 +49,10 @@ export class Navbar {
     const role = this.session.role();
 
     return role === 'ADMIN' || role === 'SUPER_ADMIN';
+  }
+
+  canManageUsers(): boolean {
+    return this.session.role() === 'SUPER_ADMIN';
   }
 
   canSeeStats(): boolean {

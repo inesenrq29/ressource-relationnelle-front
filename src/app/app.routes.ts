@@ -104,6 +104,24 @@ export const routes: Routes = [
       import('./pages/admin-resources/admin-resources').then((m) => m.AdminResourcesComponent),
   },
   {
+    path: 'admin/comments',
+    canActivate: [authGuard, roleGuard],
+    data: {
+      roles: ['MODERATOR', 'ADMIN', 'SUPER_ADMIN'],
+    },
+    loadComponent: () =>
+      import('./pages/admin-comments/admin-comments').then((m) => m.AdminCommentsComponent),
+  },
+  {
+    path: 'admin/users',
+    canActivate: [authGuard, roleGuard],
+    data: {
+      roles: ['SUPER_ADMIN'],
+    },
+    loadComponent: () =>
+      import('./pages/admin-users/admin-users').then((m) => m.AdminUsersComponent),
+  },
+  {
     path: 'admin/stats',
     canActivate: [authGuard, roleGuard],
     data: {
