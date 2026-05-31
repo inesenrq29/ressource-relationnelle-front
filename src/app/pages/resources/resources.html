@@ -1,0 +1,138 @@
+<section class="create-resource-page">
+  <mat-card class="create-resource-card">
+    <div class="page-header">
+      <p>Nouvelle ressource</p>
+      <h1>Créer une ressource</h1>
+      <span>
+        Réponds simplement aux questions ci-dessous. La ressource sera créée en brouillon.
+      </span>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="resource-form">
+      <div class="question">
+        <label>1. Dans quelle catégorie ?</label>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Catégorie</mat-label>
+
+          <mat-select formControlName="categoryId">
+            @for (category of categories(); track category.categoryId) {
+            <mat-option [value]="category.categoryId">
+              {{ category.name }}
+            </mat-option>
+            }
+          </mat-select>
+
+          @if (categoryId.invalid && categoryId.touched) {
+          <mat-error>La catégorie est obligatoire.</mat-error>
+          }
+        </mat-form-field>
+
+        @if (categories().length === 0 && canCreateCategory()) {
+        <a mat-button routerLink="/resources/categories/add">
+          Créer une catégorie
+        </a>
+        }
+
+        @if (categories().length === 0 && !canCreateCategory()) {
+        <p class="category-help">
+          Aucune catégorie disponible pour le moment. Un administrateur doit créer une catégorie
+          avant de pouvoir proposer une ressource.
+        </p>
+        }
+      </div>
+
+      <div class="question">
+        <label>2. Quel type de ressource ?</label>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Type</mat-label>
+
+          <mat-select formControlName="resourceType">
+            @for (type of resourceTypes; track type.value) {
+            <mat-option [value]="type.value">
+              {{ type.label }}
+            </mat-option>
+            }
+          </mat-select>
+
+          @if (resourceType.invalid && resourceType.touched) {
+          <mat-error>Le type est obligatoire.</mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+      <div class="question">
+        <label>3. Quel titre ?</label>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Titre</mat-label>
+
+          <input
+            matInput
+            formControlName="resourceTitle"
+            placeholder="Ex : Article sur le bien-être"
+          />
+
+          @if (resourceTitle.invalid && resourceTitle.touched) {
+          <mat-error>Le titre est obligatoire.</mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+      <div class="question">
+        <label>4. Description et tags</label>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Description</mat-label>
+
+          <textarea
+            matInput
+            rows="4"
+            formControlName="resourceDescription"
+            placeholder="Décris rapidement la ressource."
+          ></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Tags</mat-label>
+
+          <input
+            matInput
+            formControlName="tagsRaw"
+            placeholder="bien-être, communication, famille"
+          />
+
+          <mat-hint>Sépare les tags par des virgules.</mat-hint>
+        </mat-form-field>
+      </div>
+
+      @if (errorMessage() || successMessage()) {
+      <div class="feedback">
+        @if (errorMessage()) {
+        <p class="error">{{ errorMessage() }}</p>
+        }
+
+        @if (successMessage()) {
+        <p class="success">{{ successMessage() }}</p>
+        }
+      </div>
+      }
+
+      <div class="actions">
+        <a mat-stroked-button routerLink="/resources">
+          Retour au catalogue
+        </a>
+
+        <button
+          mat-raised-button
+          class="submit-button"
+          type="submit"
+          [disabled]="loading()"
+        >
+          {{ loading() ? 'Création...' : 'Créer la ressource' }}
+        </button>
+      </div>
+    </form>
+  </mat-card>
+</section>

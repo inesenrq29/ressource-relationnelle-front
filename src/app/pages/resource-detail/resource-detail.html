@@ -1,0 +1,228 @@
+<section class="resource-detail-page" aria-labelledby="resource-detail-title">
+  <a mat-button routerLink="/resources" class="back-link"> ← Retour aux ressources </a>
+
+  @if (loading()) {
+  <div class="resource-detail-state">Chargement de la ressource...</div>
+  } @else if (errorMessage()) {
+  <div class="resource-detail-state resource-detail-state--error">
+    {{ errorMessage() }}
+  </div>
+  } @else if (resource(); as currentResource) {
+  <mat-card class="resource-detail-card">
+    <div class="resource-detail-card__header">
+      <div>
+        <p class="resource-detail-card__eyebrow">
+          {{ currentResource.categoryName || 'Sans catégorie' }}
+        </p>
+
+        <h1 id="resource-detail-title">{{ currentResource.resourceTitle }}</h1>
+      </div>
+
+      <span class="resource-detail-card__type">
+          {{ getResourceTypeLabel(currentResource.resourceType) }}
+        </span>
+    </div>
+
+    <div class="resource-detail-card__meta">
+      <span>Statut : {{ getStatusLabel(currentResource.status) }}</span>
+
+      @if (currentResource.resourceCreatedAt) {
+      <span>Créée le {{ currentResource.resourceCreatedAt | date: 'dd/MM/yyyy' }}</span>
+      }
+    </div>
+
+    <p class="resource-detail-card__description">
+      {{ currentResource.resourceDescription || 'Aucune description disponible.' }}
+    </p>
+
+    @if (currentResource.tags.length > 0) {
+    <div class="resource-tags" aria-label="Tags de la ressource">
+      @for (tag of currentResource.tags; track tag) {
+      <span class="resource-tag">#{{ tag }}</span>
+      }
+    </div>
+    }
+
+    <div class="resource-share">
+      <button
+        type="button"
+        class="resource-action-btn"
+        [class.resource-action-btn--copied]="copySuccess()"
+        (click)="copyLink()"
+      >
+        <mat-icon aria-hidden="true">
+          {{ copySuccess() ? 'check_circle' : 'share' }}
+        </mat-icon>
+        {{ copySuccess() ? 'Lien copié !' : 'Partager' }}
+      </button>
+    </div>
+
+    @if (session.isLoggedIn()) {
+    <div class="resource-actions">
+      <div class="resource-actions__buttons">
+        <button
+          type="button"
+          class="resource-action-btn"
+          [class.resource-action-btn--active]="isFavorite()"
+          [disabled]="actionLoading()"
+          (click)="toggleFavorite()"
+        >
+          <mat-icon aria-hidden="true">
+            {{ isFavorite() ? 'favorite' : 'favorite_border' }}
+          </mat-icon>
+          {{ isFavorite() ? 'En favoris' : 'Ajouter aux favoris' }}
+        </button>
+
+        <button
+          type="button"
+          class="resource-action-btn"
+          [class.resource-action-btn--active]="isSetAside()"
+          [disabled]="actionLoading()"
+          (click)="toggleSetAside()"
+        >
+          <mat-icon aria-hidden="true">
+            {{ isSetAside() ? 'bookmark' : 'bookmark_border' }}
+          </mat-icon>
+          {{ isSetAside() ? 'Mise de côté' : 'Mettre de côté' }}
+        </button>
+
+        <button
+          type="button"
+          class="resource-action-btn"
+          [class.resource-action-btn--active]="isExploited()"
+          [disabled]="actionLoading()"
+          (click)="toggleExploited()"
+        >
+          <mat-icon aria-hidden="true">
+            {{ isExploited() ? 'check_circle' : 'check_circle_outline' }}
+          </mat-icon>
+          {{ isExploited() ? 'Exploitée' : 'Marquer comme exploitée' }}
+        </button>
+      </div>
+    </div>
+    } @else {
+    <p class="resource-actions-login">
+      <a routerLink="/login">Connecte-toi</a> pour interagir avec cette ressource.
+    </p>
+    }
+
+    @if (canEdit()) {
+    <div class="resource-detail-card__actions">
+      <a
+        mat-raised-button
+        [routerLink]="['/resources', currentResource.resourceId, 'edit']"
+        class="edit-button"
+      >
+        Modifier la ressource
+      </a>
+    </div>
+    }
+
+    <section class="resource-comments" aria-labelledby="comments-title">
+      <div class="resource-comments__header">
+        <div>
+          <p class="resource-comments__eyebrow">Espace commmentaires</p>
+          <h2 id="comments-title">Commentaires</h2>
+        </div>
+
+        <button mat-button type="button" (click)="reloadComments()">Actualiser</button>
+      </div>
+
+      <p class="resource-comments__count" aria-live="polite">
+        {{ commentsCountLabel() }}
+      </p>
+
+      @if (commentsLoading()) {
+      <div class="resource-comments-state">Chargement des commentaires...</div>
+      } @else if (commentsError()) {
+      <div class="resource-comments-state resource-comments-state--error">
+        <span>{{ commentsError() }}</span>
+        <button mat-stroked-button type="button" (click)="reloadComments()">Réessayer</button>
+      </div>
+      } @else if (approvedComments().length === 0) {
+      <div class="resource-comments-state">Aucun commentaire validé pour le moment.</div>
+      } @else {
+      <div class="resource-comments-list">
+        @for (comment of approvedComments(); track comment.commentsId) {
+        <article class="resource-comment">
+          <div class="resource-comment__avatar" aria-hidden="true">
+            {{ getAuthorInitial(comment.author) }}
+          </div>
+
+          <div class="resource-comment__body">
+            <div class="resource-comment__top">
+              <strong>{{ comment.author }}</strong>
+
+              <span>
+                      {{ comment.publicationDate | date: 'dd/MM/yyyy à HH:mm' }}
+                    </span>
+            </div>
+
+            @if (comment.titleComments) {
+            <h3>{{ comment.titleComments }}</h3>
+            }
+
+            <p>{{ comment.commentsContent }}</p>
+          </div>
+        </article>
+        }
+      </div>
+      }
+
+      @if (session.isLoggedIn()) {
+      <form class="resource-comment-form" (submit)="submitComment(); $event.preventDefault()">
+        <h3 class="resource-comment-form__heading">Laisser un commentaire</h3>
+
+        <div class="resource-comment-form__field">
+          <label for="comment-title">Titre du commentaire (optionnel)</label>
+          <input
+            id="comment-title"
+            class="resource-comment-form__input"
+            type="text"
+            placeholder="Ton titre..."
+            [value]="commentTitle()"
+            (input)="commentTitle.set($any($event.target).value)"
+            maxlength="100"
+          />
+        </div>
+
+        <div class="resource-comment-form__field">
+          <label for="comment-content">Commentaire</label>
+          <textarea
+            id="comment-content"
+            class="resource-comment-form__textarea"
+            placeholder="Ton commentaire..."
+            [value]="commentContent()"
+            (input)="commentContent.set($any($event.target).value)"
+            rows="4"
+            maxlength="5000"
+            required
+          ></textarea>
+        </div>
+
+        <button
+          type="submit"
+          mat-raised-button
+          class="resource-comment-form__submit"
+          [disabled]="commentSubmitting() || !commentContent().trim()"
+        >
+          {{ commentSubmitting() ? 'Publication...' : 'Publier' }}
+        </button>
+
+        @if (commentSuccess()) {
+        <p class="resource-comment-form__success">{{ commentSuccess() }}</p>
+        }
+
+        @if (commentError()) {
+        <p class="resource-comment-form__error">{{ commentError() }}</p>
+        }
+      </form>
+      } @else {
+      <p class="resource-comments__login">
+        <a routerLink="/login">Connecte-toi</a> pour laisser un commentaire.
+      </p>
+      }
+    </section>
+  </mat-card>
+  }
+</section>

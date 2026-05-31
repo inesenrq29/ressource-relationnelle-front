@@ -1,0 +1,238 @@
+:host {
+  display: block;
+}
+
+.admin-users-page {
+  min-height: calc(100vh - 78px);
+  padding: clamp(1.2rem, 3vw, 2.5rem);
+}
+
+.admin-users-hero,
+.create-user-card,
+.users-card {
+  max-width: 1180px;
+  margin-inline: auto;
+}
+
+.admin-users-hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  align-items: flex-end;
+  padding: clamp(1.5rem, 3vw, 2.2rem);
+  border-radius: 32px;
+  background:
+    radial-gradient(circle at top right, rgba(255, 183, 3, 0.22), transparent 30%),
+    linear-gradient(135deg, rgba(2, 48, 71, 0.97), rgba(33, 158, 188, 0.9));
+  color: white;
+  box-shadow: var(--rr-shadow);
+}
+
+.admin-users-hero__eyebrow,
+.section-header p,
+.users-card__header p {
+  margin: 0 0 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.76rem;
+  font-weight: 900;
+}
+
+.admin-users-hero__eyebrow {
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.admin-users-hero h1 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 4rem);
+  line-height: 1.05;
+  font-weight: 300;
+}
+
+.admin-users-hero p:last-child {
+  max-width: 760px;
+  margin: 1rem 0 0;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.primary-button,
+.danger-button {
+  border-radius: 999px !important;
+  font-weight: 800;
+}
+
+.primary-button {
+  background: linear-gradient(135deg, var(--rr-yellow), var(--rr-orange)) !important;
+  color: var(--rr-navy) !important;
+}
+
+.danger-button {
+  color: var(--rr-danger) !important;
+  border-color: rgba(201, 95, 95, 0.45) !important;
+}
+
+.create-user-card,
+.users-card {
+  margin-top: 1.3rem;
+  padding: 1.3rem;
+  border-radius: 28px !important;
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(2, 48, 71, 0.08);
+  box-shadow: 0 18px 42px rgba(2, 48, 71, 0.08);
+}
+
+.section-header p,
+.users-card__header p {
+  color: var(--rr-orange);
+}
+
+.section-header h2,
+.users-card__header h2 {
+  margin: 0;
+  color: var(--rr-navy);
+  font-size: 1.35rem;
+}
+
+.create-user-form {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.create-user-form mat-form-field {
+  width: 100%;
+}
+
+.create-user-actions {
+  display: flex;
+  align-items: center;
+}
+
+.create-user-actions button {
+  min-height: 48px;
+  width: 100%;
+}
+
+.feedback,
+.state {
+  margin: 1rem 0 0;
+  padding: 0.9rem 1rem;
+  border-radius: 16px;
+  font-weight: 800;
+}
+
+.feedback--error {
+  background: rgba(201, 95, 95, 0.1);
+  color: var(--rr-danger);
+}
+
+.feedback--success {
+  background: rgba(46, 125, 50, 0.1);
+  color: #2e7d32;
+}
+
+.state {
+  background: rgba(2, 48, 71, 0.05);
+  color: var(--rr-navy);
+}
+
+.users-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 1rem;
+}
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.users-table th,
+.users-table td {
+  padding: 0.95rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(2, 48, 71, 0.08);
+  vertical-align: middle;
+}
+
+.users-table th {
+  color: var(--rr-navy);
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.users-table td {
+  color: rgba(84, 84, 84, 0.92);
+}
+
+.users-table td strong {
+  color: var(--rr-navy);
+}
+
+.current-user-label,
+.role-badge,
+.status-badge,
+.no-action {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.current-user-label {
+  margin-left: 0.4rem;
+  color: var(--rr-orange);
+  background: rgba(255, 183, 3, 0.16);
+}
+
+.role-badge {
+  color: var(--rr-navy);
+  background: rgba(142, 202, 230, 0.28);
+}
+
+.status-badge--active {
+  color: #256b4f;
+  background: rgba(37, 107, 79, 0.12);
+}
+
+.status-badge--disabled {
+  color: var(--rr-danger);
+  background: rgba(201, 95, 95, 0.12);
+}
+
+.no-action {
+  color: rgba(84, 84, 84, 0.76);
+  background: rgba(2, 48, 71, 0.06);
+}
+
+@media (max-width: 1000px) {
+  .create-user-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-users-hero {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 650px) {
+  .admin-users-page {
+    padding: 1rem;
+  }
+
+  .create-user-form {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-users-hero .primary-button,
+  .create-user-actions button {
+    width: 100%;
+  }
+}

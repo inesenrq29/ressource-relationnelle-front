@@ -1,0 +1,105 @@
+<main class="landing-page" aria-label="Accueil">
+  <section class="hero" #revealBlock>
+    <div class="hero__content">
+      <p class="eyebrow">Prends soin de toi à travers tes relations</p>
+
+      <h1>Des ressources qui préservent les relations, le partage et le bien-être</h1>
+
+      <p class="hero__description">
+        Explore des contenus utiles, humains et accessibles pour mieux te comprendre, comprendre
+        tes relations et découvrir de nouvelles pratiques.
+      </p>
+
+      <div class="hero__actions">
+        <a mat-raised-button routerLink="/resources" class="btn-primary">
+          Découvrir les ressources
+        </a>
+
+        <a mat-stroked-button routerLink="/aide" class="btn-secondary">
+          En savoir plus
+        </a>
+      </div>
+
+      <ul class="hero__highlights" aria-label="Points clés">
+        <li>Tu pourras découvrir des contenus variés</li>
+        <li>Conserver les ressources utiles</li>
+        <li>Partager du contenu avec tes relations</li>
+      </ul>
+    </div>
+
+    <aside class="hero__panel" aria-label="Aperçu de la plateforme">
+      <span></span>
+
+      <div class="hero-card hero-card--accent">
+        <span class="hero-card__label">Expérience</span>
+        <strong>Simple et intuitive</strong>
+        <p>
+          Une plateforme pensée pour découvrir, conserver et partager des ressources autour des
+          liens relationnels.
+        </p>
+      </div>
+
+      <div class="hero-stats">
+        <div class="hero-card">
+          <span class="hero-card__label">Formats de ressources disponibles</span>
+          <strong>6 formats disponibles pour l’instant !</strong>
+        </div>
+
+        <div class="hero-card">
+          <span class="hero-card__label">Types de ressources disponibles</span>
+          <strong>Articles, vidéos, PDF...</strong>
+        </div>
+      </div>
+
+      <span></span>
+    </aside>
+  </section>
+
+  <section class="content-strip" aria-label="Formats disponibles" #revealBlock>
+    <div class="content-strip__inner">
+      <p class="content-strip__title">Formats de contenu</p>
+
+      <div class="content-strip__track" role="list">
+        <span class="content-pill" role="listitem" *ngFor="let contentType of contentTypes">
+          {{ contentType }}
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <section class="content-section" #revealBlock>
+    <div class="section-intro">
+      <p class="eyebrow">Explorer</p>
+      <h2>Des types de contenu pensés pour différents usages</h2>
+      <p>
+        Chaque format répond à une manière différente d’apprendre, de réfléchir, de pratiquer ou de
+        revenir plus tard sur une ressource.
+      </p>
+    </div>
+
+    <div class="resource-grid">
+      <mat-card class="resource-card" *ngFor="let resource of resourceTypes; let i = index">
+        <div class="resource-card__top">
+          <div class="resource-card__icon" aria-hidden="true">
+            <mat-icon>{{ resource.icon }}</mat-icon>
+          </div>
+
+          <span class="resource-card__tag">{{ resource.tag }}</span>
+        </div>
+
+        <div class="resource-card__body">
+          <h3>{{ resource.title }}</h3>
+          <p>{{ resource.description }}</p>
+
+          <ul class="resource-card__list">
+            <li *ngFor="let point of resource.points">{{ point }}</li>
+          </ul>
+        </div>
+
+        <a mat-button routerLink="/resources" class="resource-card__link">
+          Accéder
+        </a>
+      </mat-card>
+    </div>
+  </section>
+</main>

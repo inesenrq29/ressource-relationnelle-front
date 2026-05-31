@@ -1,0 +1,187 @@
+<section class="admin-stats-page" aria-labelledby="admin-stats-title">
+  <header class="admin-stats-hero">
+    <div>
+      <p class="admin-stats-hero__eyebrow">Back-office</p>
+      <h1 id="admin-stats-title">Statistiques</h1>
+      <p>
+        Suivez la consultation et l’utilisation des ressources grâce aux indicateurs du catalogue.
+      </p>
+    </div>
+
+    <button
+      mat-raised-button
+      class="export-button"
+      type="button"
+      [disabled]="exportLoading() || loading()"
+      (click)="exportCsv()"
+    >
+      <mat-icon aria-hidden="true">download</mat-icon>
+      {{ exportLoading() ? 'Export en cours...' : 'Exporter en CSV' }}
+    </button>
+  </header>
+
+  <mat-card class="admin-stats-filters" aria-label="Filtres statistiques">
+    <mat-form-field appearance="outline">
+      <mat-label>Catégorie</mat-label>
+
+      <mat-select
+        [value]="selectedCategoryId()"
+        aria-label="Filtrer par catégorie"
+        (selectionChange)="selectedCategoryId.set($event.value)"
+      >
+        <mat-option value="ALL">Toutes catégories</mat-option>
+
+        @for (category of categories(); track category.categoryId) {
+        <mat-option [value]="category.categoryId">
+          {{ category.name }}
+        </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Type de ressource</mat-label>
+
+      <mat-select
+        [value]="selectedResourceType()"
+        aria-label="Filtrer par type de ressource"
+        (selectionChange)="selectedResourceType.set($event.value)"
+      >
+        <mat-option value="ALL">Tous les types</mat-option>
+
+        @for (type of resourceTypeOptions; track type.value) {
+        <mat-option [value]="type.value">
+          {{ type.label }}
+        </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Date de début</mat-label>
+      <input
+        matInput
+        type="date"
+        [ngModel]="startDate()"
+        aria-label="Filtrer à partir de cette date"
+        (ngModelChange)="startDate.set($event)"
+      />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Date de fin</mat-label>
+      <input
+        matInput
+        type="date"
+        [ngModel]="endDate()"
+        aria-label="Filtrer jusqu’à cette date"
+        (ngModelChange)="endDate.set($event)"
+      />
+    </mat-form-field>
+
+    <div class="admin-stats-filters__actions">
+      <button
+        mat-raised-button
+        type="button"
+        class="filter-button"
+        [disabled]="filterLoading()"
+        (click)="applyFilters()"
+      >
+        <mat-icon aria-hidden="true">filter_alt</mat-icon>
+        {{ filterLoading() ? 'Filtrage...' : 'Appliquer' }}
+      </button>
+
+      <button mat-stroked-button type="button" class="reset-button" (click)="resetFilters()">
+        Réinitialiser
+      </button>
+    </div>
+  </mat-card>
+
+  <p class="admin-stats-active-filters" aria-live="polite">
+    {{ activeFiltersLabel() }}
+  </p>
+
+  @if (loading()) {
+  <div class="admin-stats-state">Chargement des statistiques...</div>
+  } @else if (errorMessage()) {
+  <div class="admin-stats-state admin-stats-state--error">
+    {{ errorMessage() }}
+  </div>
+  } @else if (stats(); as s) {
+  <div class="admin-stats-summary">
+    <mat-card class="admin-stats-card">
+      <span class="admin-stats-card__value">{{ s.totalResourcesCount }}</span>
+      <span class="admin-stats-card__label">Ressources totales</span>
+    </mat-card>
+
+    <mat-card class="admin-stats-card">
+      <span class="admin-stats-card__value">{{ s.exploitedResourcesCount }}</span>
+      <span class="admin-stats-card__label">Ressources exploitées</span>
+    </mat-card>
+
+    <mat-card class="admin-stats-card">
+      <span class="admin-stats-card__value">{{ entries(s.resourcesByCategory).length }}</span>
+      <span class="admin-stats-card__label">Catégories représentées</span>
+    </mat-card>
+
+    <mat-card class="admin-stats-card">
+      <span class="admin-stats-card__value">{{ entries(s.resourcesByType).length }}</span>
+      <span class="admin-stats-card__label">Types représentés</span>
+    </mat-card>
+  </div>
+
+  <div class="admin-stats-grid">
+    <section class="admin-stats-section" aria-labelledby="stats-category-title">
+      <h2 id="stats-category-title" class="admin-stats-section__title">Par catégorie</h2>
+
+      @if (entries(s.resourcesByCategory).length === 0) {
+      <p class="admin-stats-empty">Aucune donnée pour les filtres sélectionnés.</p>
+      } @else {
+      <table class="admin-stats-table">
+        <thead>
+        <tr>
+          <th scope="col">Catégorie</th>
+          <th scope="col">Ressources</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        @for (entry of entries(s.resourcesByCategory); track entry[0]) {
+        <tr>
+          <td>{{ entry[0] }}</td>
+          <td class="admin-stats-table__count">{{ entry[1] }}</td>
+        </tr>
+        }
+        </tbody>
+      </table>
+      }
+    </section>
+
+    <section class="admin-stats-section" aria-labelledby="stats-type-title">
+      <h2 id="stats-type-title" class="admin-stats-section__title">Par type</h2>
+
+      @if (entries(s.resourcesByType).length === 0) {
+      <p class="admin-stats-empty">Aucune donnée pour les filtres sélectionnés.</p>
+      } @else {
+      <table class="admin-stats-table">
+        <thead>
+        <tr>
+          <th scope="col">Type</th>
+          <th scope="col">Ressources</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        @for (entry of entries(s.resourcesByType); track entry[0]) {
+        <tr>
+          <td>{{ getTypeLabel(entry[0]) }}</td>
+          <td class="admin-stats-table__count">{{ entry[1] }}</td>
+        </tr>
+        }
+        </tbody>
+      </table>
+      }
+    </section>
+  </div>
+  }
+</section>
