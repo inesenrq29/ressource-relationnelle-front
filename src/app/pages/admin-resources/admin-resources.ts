@@ -9,11 +9,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 
-import {
-  ResourceDto,
-  ResourceService,
-  ResourceStatus,
-} from '../../core/services/resource.service';
+import { ResourceDto, ResourceService, ResourceStatus } from '../../core/services/resource.service';
 
 type StatusFilter = ResourceStatus | 'ALL';
 
@@ -71,8 +67,7 @@ export class AdminResourcesComponent implements OnInit {
         resource.categoryName?.toLowerCase().includes(searchValue);
 
       const matchesStatus =
-        this.selectedStatus === 'ALL' ||
-        resource.status === this.selectedStatus;
+        this.selectedStatus === 'ALL' || resource.status === this.selectedStatus;
 
       return matchesSearch && matchesStatus;
     });
@@ -133,9 +128,7 @@ export class AdminResourcesComponent implements OnInit {
   }
 
   delete(resource: ResourceDto): void {
-    const confirmed = confirm(
-      `Supprimer la ressource "${resource.resourceTitle}" ?`,
-    );
+    const confirmed = confirm(`Supprimer la ressource "${resource.resourceTitle}" ?`);
 
     if (!confirmed) {
       return;
@@ -154,9 +147,7 @@ export class AdminResourcesComponent implements OnInit {
       )
       .subscribe({
         next: () => {
-          this.resources = this.resources.filter(
-            (item) => item.resourceId !== resource.resourceId,
-          );
+          this.resources = this.resources.filter((item) => item.resourceId !== resource.resourceId);
           this.successMessage = 'Ressource supprimée.';
         },
         error: () => {

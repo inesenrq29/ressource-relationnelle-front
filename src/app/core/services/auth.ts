@@ -131,11 +131,13 @@ export class AuthService {
 
   private extractRoleFromUserDto(userDto: UserDto): string | null {
     const userWithRole = userDto as unknown as {
-      role?: string | {
-        roleName?: string;
-        name?: string;
-        authority?: string;
-      };
+      role?:
+        | string
+        | {
+            roleName?: string;
+            name?: string;
+            authority?: string;
+          };
     };
 
     if (!userWithRole.role) {
@@ -147,10 +149,7 @@ export class AuthService {
     }
 
     return this.normalizeRole(
-      userWithRole.role.roleName ??
-        userWithRole.role.name ??
-        userWithRole.role.authority ??
-        null,
+      userWithRole.role.roleName ?? userWithRole.role.name ?? userWithRole.role.authority ?? null,
     );
   }
 
@@ -166,12 +165,10 @@ export class AuthService {
         return null;
       }
 
-      const normalizedPayload = payloadPart
-        .replace(/-/g, '+')
-        .replace(/_/g, '/');
+      const normalizedPayload = payloadPart.replace(/-/g, '+').replace(/_/g, '/');
 
       const paddedPayload = normalizedPayload.padEnd(
-        normalizedPayload.length + ((4 - normalizedPayload.length % 4) % 4),
+        normalizedPayload.length + ((4 - (normalizedPayload.length % 4)) % 4),
         '=',
       );
 

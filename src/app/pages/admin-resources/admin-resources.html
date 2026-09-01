@@ -3,29 +3,19 @@
     <div class="page-header">
       <p>Back-office</p>
       <h1>Gestion des ressources</h1>
-      <span>
-        Valide, publie ou archive les ressources proposées par les utilisateurs.
-      </span>
+      <span> Valide, publie ou archive les ressources proposées par les utilisateurs. </span>
     </div>
 
     <div class="top-actions">
-      <a mat-stroked-button routerLink="/resources/add">
-        Ajouter une ressource
-      </a>
+      <a mat-stroked-button routerLink="/resources/add"> Ajouter une ressource </a>
 
-      <a mat-stroked-button routerLink="/resources/categories/add">
-        Ajouter une catégorie
-      </a>
+      <a mat-stroked-button routerLink="/resources/categories/add"> Ajouter une catégorie </a>
     </div>
 
     <div class="filters">
       <mat-form-field appearance="outline">
         <mat-label>Recherche</mat-label>
-        <input
-          matInput
-          [(ngModel)]="search"
-          placeholder="Titre, description, catégorie..."
-        />
+        <input matInput [(ngModel)]="search" placeholder="Titre, description, catégorie..." />
       </mat-form-field>
 
       <mat-form-field appearance="outline">
@@ -43,9 +33,7 @@
       <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
     </div>
 
-    <p class="state" *ngIf="loading">
-      Chargement des ressources...
-    </p>
+    <p class="state" *ngIf="loading">Chargement des ressources...</p>
 
     <p class="state" *ngIf="!loading && filteredResources.length === 0">
       Aucune ressource trouvée.
@@ -70,9 +58,7 @@
         </p>
 
         <div class="actions">
-          <a mat-button [routerLink]="['/resources', resource.resourceId]">
-            Voir
-          </a>
+          <a mat-button [routerLink]="['/resources', resource.resourceId]"> Voir </a>
 
           <button
             mat-stroked-button

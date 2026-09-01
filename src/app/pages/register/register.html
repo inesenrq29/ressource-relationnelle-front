@@ -10,8 +10,7 @@
       </p>
     </div>
 
-    <div class="auth-visual__footer">
-    </div>
+    <div class="auth-visual__footer"></div>
   </section>
 
   <section class="auth-card">
@@ -25,12 +24,7 @@
       <div class="form-row">
         <div class="field">
           <label for="email">Adresse email</label>
-          <input
-            id="email"
-            type="email"
-            formControlName="email"
-            placeholder="exemple@email.com"
-          />
+          <input id="email" type="email" formControlName="email" placeholder="exemple@email.com" />
           <small class="field-error" *ngIf="email.touched && email.errors?.['required']">
             L’email est obligatoire.
           </small>
@@ -123,10 +117,7 @@
         Les conditions d’utilisation doivent être acceptées.
       </small>
 
-      <small
-        class="field-error"
-        *ngIf="isPrivacyPolicyAccepted.touched"
-      >
+      <small class="field-error" *ngIf="isPrivacyPolicyAccepted.touched">
         La politique de confidentialité doit être acceptée.
       </small>
 

@@ -46,7 +46,7 @@ export class LoginComponent {
             pseudo: response.userDto.pseudo,
             email: response.userDto.mail,
           },
-          response.accessToken
+          response.accessToken,
         );
 
         this.router.navigateByUrl('/');

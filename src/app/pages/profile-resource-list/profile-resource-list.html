@@ -10,59 +10,59 @@
   </header>
 
   @if (resources().length === 0) {
-  <mat-card class="empty-state">
-    <mat-icon aria-hidden="true">inbox</mat-icon>
+    <mat-card class="empty-state">
+      <mat-icon aria-hidden="true">inbox</mat-icon>
 
-    <h2>Aucune ressource à afficher</h2>
+      <h2>Aucune ressource à afficher</h2>
 
-    <p>
-      Ouvre une ressource depuis le catalogue puis utilise les boutons favoris, mise de côté ou
-      exploitée pour l’ajouter ici.
-    </p>
+      <p>
+        Ouvre une ressource depuis le catalogue puis utilise les boutons favoris, mise de côté ou
+        exploitée pour l’ajouter ici.
+      </p>
 
-    <a mat-raised-button routerLink="/resources" class="primary-button">
-      Explorer les ressources
-    </a>
-  </mat-card>
+      <a mat-raised-button routerLink="/resources" class="primary-button">
+        Explorer les ressources
+      </a>
+    </mat-card>
   } @else {
-  <section class="resources-grid" aria-label="Ressources du profil">
-    @for (resource of resources(); track resource.resourceId) {
-    <mat-card class="resource-card">
-      <div class="resource-card__top">
+    <section class="resources-grid" aria-label="Ressources du profil">
+      @for (resource of resources(); track resource.resourceId) {
+        <mat-card class="resource-card">
+          <div class="resource-card__top">
             <span class="resource-card__type">
               {{ getResourceTypeLabel(resource.resourceType) }}
             </span>
 
-        <span class="resource-card__category">
+            <span class="resource-card__category">
               {{ resource.categoryName || 'Sans catégorie' }}
             </span>
-      </div>
+          </div>
 
-      <h2>{{ resource.resourceTitle }}</h2>
+          <h2>{{ resource.resourceTitle }}</h2>
 
-      <p class="resource-card__description">
-        {{ resource.resourceDescription || 'Aucune description disponible.' }}
-      </p>
+          <p class="resource-card__description">
+            {{ resource.resourceDescription || 'Aucune description disponible.' }}
+          </p>
 
-      @if (resource.tags.length > 0) {
-      <div class="resource-tags" aria-label="Tags de la ressource">
-        @for (tag of resource.tags; track tag) {
-        <span class="resource-tag">#{{ tag }}</span>
-        }
-      </div>
+          @if (resource.tags.length > 0) {
+            <div class="resource-tags" aria-label="Tags de la ressource">
+              @for (tag of resource.tags; track tag) {
+                <span class="resource-tag">#{{ tag }}</span>
+              }
+            </div>
+          }
+
+          <div class="resource-card__actions">
+            <a
+              mat-raised-button
+              class="primary-button"
+              [routerLink]="['/resources', resource.resourceId]"
+            >
+              Voir le détail
+            </a>
+          </div>
+        </mat-card>
       }
-
-      <div class="resource-card__actions">
-        <a
-          mat-raised-button
-          class="primary-button"
-          [routerLink]="['/resources', resource.resourceId]"
-        >
-          Voir le détail
-        </a>
-      </div>
-    </mat-card>
-    }
-  </section>
+    </section>
   }
 </section>

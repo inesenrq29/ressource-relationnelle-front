@@ -10,9 +10,7 @@
       <mat-form-field appearance="outline">
         <mat-label>Nom de la catégorie</mat-label>
         <input matInput formControlName="name" placeholder="Ex : Communication" />
-        <mat-error *ngIf="name.invalid && name.touched">
-          Le nom est requis.
-        </mat-error>
+        <mat-error *ngIf="name.invalid && name.touched"> Le nom est requis. </mat-error>
       </mat-form-field>
 
       <div class="category-feedback" *ngIf="errorMessage || successMessage">

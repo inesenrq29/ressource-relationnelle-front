@@ -16,10 +16,10 @@ import { ResourceService } from '../../core/services/resource.service';
     MatButtonModule,
     MatCardModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
   ],
   templateUrl: './add-category.html',
-  styleUrl: './add-category.css'
+  styleUrl: './add-category.css',
 })
 export class AddCategoryComponent {
   private readonly fb = inject(FormBuilder);
@@ -30,7 +30,7 @@ export class AddCategoryComponent {
   successMessage = '';
 
   form = this.fb.nonNullable.group({
-    name: ['', [Validators.required, Validators.maxLength(100)]]
+    name: ['', [Validators.required, Validators.maxLength(100)]],
   });
 
   submit(): void {
@@ -51,9 +51,8 @@ export class AddCategoryComponent {
       },
       error: (error) => {
         this.loading = false;
-        this.errorMessage =
-          error?.error?.message || 'Impossible de créer la catégorie.';
-      }
+        this.errorMessage = error?.error?.message || 'Impossible de créer la catégorie.';
+      },
     });
   }
 

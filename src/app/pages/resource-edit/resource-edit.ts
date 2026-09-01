@@ -107,9 +107,7 @@ export class ResourceEditComponent implements OnInit {
       },
       error: (error) => {
         this.saving.set(false);
-        this.errorMessage.set(
-          error?.error?.message || 'Impossible de modifier la ressource.'
-        );
+        this.errorMessage.set(error?.error?.message || 'Impossible de modifier la ressource.');
       },
     });
   }
@@ -144,7 +142,13 @@ export class ResourceEditComponent implements OnInit {
       .filter((tag) => tag.length > 0);
   }
 
-  get categoryId() { return this.form.controls.categoryId; }
-  get resourceType() { return this.form.controls.resourceType; }
-  get resourceTitle() { return this.form.controls.resourceTitle; }
+  get categoryId() {
+    return this.form.controls.categoryId;
+  }
+  get resourceType() {
+    return this.form.controls.resourceType;
+  }
+  get resourceTitle() {
+    return this.form.controls.resourceTitle;
+  }
 }

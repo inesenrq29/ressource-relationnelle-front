@@ -17,28 +17,26 @@
 
           <mat-select formControlName="categoryId">
             @for (category of categories(); track category.categoryId) {
-            <mat-option [value]="category.categoryId">
-              {{ category.name }}
-            </mat-option>
+              <mat-option [value]="category.categoryId">
+                {{ category.name }}
+              </mat-option>
             }
           </mat-select>
 
           @if (categoryId.invalid && categoryId.touched) {
-          <mat-error>La catégorie est obligatoire.</mat-error>
+            <mat-error>La catégorie est obligatoire.</mat-error>
           }
         </mat-form-field>
 
         @if (categories().length === 0 && canCreateCategory()) {
-        <a mat-button routerLink="/resources/categories/add">
-          Créer une catégorie
-        </a>
+          <a mat-button routerLink="/resources/categories/add"> Créer une catégorie </a>
         }
 
         @if (categories().length === 0 && !canCreateCategory()) {
-        <p class="category-help">
-          Aucune catégorie disponible pour le moment. Un administrateur doit créer une catégorie
-          avant de pouvoir proposer une ressource.
-        </p>
+          <p class="category-help">
+            Aucune catégorie disponible pour le moment. Un administrateur doit créer une catégorie
+            avant de pouvoir proposer une ressource.
+          </p>
         }
       </div>
 
@@ -50,14 +48,14 @@
 
           <mat-select formControlName="resourceType">
             @for (type of resourceTypes; track type.value) {
-            <mat-option [value]="type.value">
-              {{ type.label }}
-            </mat-option>
+              <mat-option [value]="type.value">
+                {{ type.label }}
+              </mat-option>
             }
           </mat-select>
 
           @if (resourceType.invalid && resourceType.touched) {
-          <mat-error>Le type est obligatoire.</mat-error>
+            <mat-error>Le type est obligatoire.</mat-error>
           }
         </mat-form-field>
       </div>
@@ -75,7 +73,7 @@
           />
 
           @if (resourceTitle.invalid && resourceTitle.touched) {
-          <mat-error>Le titre est obligatoire.</mat-error>
+            <mat-error>Le titre est obligatoire.</mat-error>
           }
         </mat-form-field>
       </div>
@@ -108,28 +106,21 @@
       </div>
 
       @if (errorMessage() || successMessage()) {
-      <div class="feedback">
-        @if (errorMessage()) {
-        <p class="error">{{ errorMessage() }}</p>
-        }
+        <div class="feedback">
+          @if (errorMessage()) {
+            <p class="error">{{ errorMessage() }}</p>
+          }
 
-        @if (successMessage()) {
-        <p class="success">{{ successMessage() }}</p>
-        }
-      </div>
+          @if (successMessage()) {
+            <p class="success">{{ successMessage() }}</p>
+          }
+        </div>
       }
 
       <div class="actions">
-        <a mat-stroked-button routerLink="/resources">
-          Retour au catalogue
-        </a>
+        <a mat-stroked-button routerLink="/resources"> Retour au catalogue </a>
 
-        <button
-          mat-raised-button
-          class="submit-button"
-          type="submit"
-          [disabled]="loading()"
-        >
+        <button mat-raised-button class="submit-button" type="submit" [disabled]="loading()">
           {{ loading() ? 'Création...' : 'Créer la ressource' }}
         </button>
       </div>

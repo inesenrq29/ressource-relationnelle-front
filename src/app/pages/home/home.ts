@@ -1,10 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  QueryList,
-  ViewChildren
-} from '@angular/core';
+import { AfterViewInit, Component, ElementRef, QueryList, ViewChildren } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -17,7 +11,6 @@ interface ResourceType {
   description: string;
   points: string[];
   tag: string;
-
 }
 
 @Component({
@@ -25,7 +18,7 @@ interface ResourceType {
   standalone: true,
   imports: [CommonModule, RouterLink, MatCardModule, MatButtonModule, MatIconModule],
   templateUrl: './home.html',
-  styleUrl: './home.css'
+  styleUrl: './home.css',
 })
 export class Home implements AfterViewInit {
   @ViewChildren('revealBlock') revealBlocks!: QueryList<ElementRef<HTMLElement>>;
@@ -38,43 +31,47 @@ export class Home implements AfterViewInit {
       icon: 'article',
       tag: 'Lire',
       description: 'Des contenus écrits pour mieux comprendre les relations du quotidien.',
-      points: ['Formats courts et lisibles', 'Repères concrets', 'Lecture autonome']
+      points: ['Formats courts et lisibles', 'Repères concrets', 'Lecture autonome'],
     },
     {
       title: 'Vidéos',
       icon: 'smart_display',
       tag: 'Regarder',
-      description: 'Des ressources visuelles accessibles pour découvrir des notions et des pratiques pas à pas.',
-      points: ['Approche pédagogique', 'Format engageant', 'Visionnage à son rythme']
+      description:
+        'Des ressources visuelles accessibles pour découvrir des notions et des pratiques pas à pas.',
+      points: ['Approche pédagogique', 'Format engageant', 'Visionnage à son rythme'],
     },
     {
       title: 'Activités',
       icon: 'toys',
       tag: 'Pratiquer',
-      description: 'Des exercices simples à vivre seul, en duo ou en groupe pour passer à l’action.',
-      points: ['Mise en pratique', 'Participation active', 'Temps d’échange']
+      description:
+        'Des exercices simples à vivre seul, en duo ou en groupe pour passer à l’action.',
+      points: ['Mise en pratique', 'Participation active', 'Temps d’échange'],
     },
     {
       title: 'PDF',
       icon: 'picture_as_pdf',
       tag: 'Conserver',
       description: 'Des fiches pratiques à garder, relire et partager selon ses besoins.',
-      points: ['Support téléchargeable', 'Repères synthétiques', 'Consultation facile']
+      points: ['Support téléchargeable', 'Repères synthétiques', 'Consultation facile'],
     },
     {
       title: 'Images',
       icon: 'image',
       tag: 'Visualiser',
-      description: 'Des supports visuels clairs pour mieux mémoriser et s’approprier certains messages.',
-      points: ['Lecture rapide', 'Formats visuels', 'Accès simplifié']
+      description:
+        'Des supports visuels clairs pour mieux mémoriser et s’approprier certains messages.',
+      points: ['Lecture rapide', 'Formats visuels', 'Accès simplifié'],
     },
     {
       title: 'Audio',
       icon: 'headphones',
       tag: 'Écouter',
-      description: 'Des contenus sonores conçus pour l’écoute, la réflexion et les temps plus calmes.',
-      points: ['Usage flexible', 'Moment d’apaisement', 'Écoute mobile']
-    }
+      description:
+        'Des contenus sonores conçus pour l’écoute, la réflexion et les temps plus calmes.',
+      points: ['Usage flexible', 'Moment d’apaisement', 'Écoute mobile'],
+    },
   ];
 
   ngAfterViewInit(): void {
@@ -94,8 +91,8 @@ export class Home implements AfterViewInit {
       },
       {
         threshold: 0.18,
-        rootMargin: '0px 0px -8% 0px'
-      }
+        rootMargin: '0px 0px -8% 0px',
+      },
     );
 
     this.revealBlocks.forEach((block) => observer.observe(block.nativeElement));

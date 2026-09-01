@@ -53,12 +53,10 @@ function readRoleFromToken(): string | null {
       return null;
     }
 
-    const normalizedPayload = payloadPart
-      .replace(/-/g, '+')
-      .replace(/_/g, '/');
+    const normalizedPayload = payloadPart.replace(/-/g, '+').replace(/_/g, '/');
 
     const paddedPayload = normalizedPayload.padEnd(
-      normalizedPayload.length + ((4 - normalizedPayload.length % 4) % 4),
+      normalizedPayload.length + ((4 - (normalizedPayload.length % 4)) % 4),
       '=',
     );
 
