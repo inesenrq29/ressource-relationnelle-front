@@ -1,12 +1,15 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { Navbar } from './shared/components/navbar/navbar';
+import { CookieBanner } from './shared/components/cookie-banner/cookie-banner';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  standalone: true,
+  imports: [RouterOutlet, Navbar, CookieBanner],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrl: './app.css',
 })
-export class App {
-  protected readonly title = signal('ressource-relationnelle');
+export class AppComponent {
+  title = 'ressource-relationnelle';
 }

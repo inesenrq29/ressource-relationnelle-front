@@ -1,0 +1,151 @@
+<section class="admin-comments-page" aria-labelledby="admin-comments-title">
+  <header class="admin-comments-hero">
+    <div>
+      <p class="admin-comments-hero__eyebrow">Back-office</p>
+
+      <h1 id="admin-comments-title">Modération des commentaires</h1>
+
+      <p>
+        Consulte les commentaires envoyés par les utilisateurs, puis approuve ou refuse ceux en
+        attente de validation.
+      </p>
+    </div>
+
+    <button mat-raised-button type="button" class="primary-button" (click)="loadComments()">
+      <mat-icon aria-hidden="true">refresh</mat-icon>
+      Actualiser
+    </button>
+  </header>
+
+  <mat-card class="admin-comments-filters">
+    <button
+      mat-button
+      type="button"
+      [class.active-filter]="selectedFilter() === 'PENDING'"
+      (click)="changeFilter('PENDING')"
+    >
+      En attente
+    </button>
+
+    <button
+      mat-button
+      type="button"
+      [class.active-filter]="selectedFilter() === 'APPROVED'"
+      (click)="changeFilter('APPROVED')"
+    >
+      Approuvés
+    </button>
+
+    <button
+      mat-button
+      type="button"
+      [class.active-filter]="selectedFilter() === 'REJECTED'"
+      (click)="changeFilter('REJECTED')"
+    >
+      Refusés
+    </button>
+
+    <button
+      mat-button
+      type="button"
+      [class.active-filter]="selectedFilter() === 'ALL'"
+      (click)="changeFilter('ALL')"
+    >
+      Tous
+    </button>
+
+    <span aria-live="polite">{{ countLabel() }}</span>
+  </mat-card>
+
+  @if (loading()) {
+    <div class="admin-comments-state">Chargement des commentaires...</div>
+  }
+
+  @if (!loading() && errorMessage()) {
+    <div class="admin-comments-state admin-comments-state--error">
+      {{ errorMessage() }}
+    </div>
+  }
+
+  @if (!loading() && successMessage()) {
+    <div class="admin-comments-state admin-comments-state--success">
+      {{ successMessage() }}
+    </div>
+  }
+
+  @if (!loading() && filteredComments().length === 0) {
+    <mat-card class="empty-state">
+      <mat-icon aria-hidden="true">forum</mat-icon>
+
+      <h2>Aucun commentaire à afficher</h2>
+
+      <p>Il n’y a aucun commentaire correspondant au filtre sélectionné.</p>
+    </mat-card>
+  }
+
+  @if (!loading() && filteredComments().length > 0) {
+    <section class="comments-grid" aria-label="Liste des commentaires à modérer">
+      @for (comment of filteredComments(); track comment.commentsId) {
+        <mat-card class="comment-card">
+          <div class="comment-card__top">
+            <div>
+              <strong>{{ comment.author }}</strong>
+              <span>{{ comment.publicationDate | date: 'dd/MM/yyyy à HH:mm' }}</span>
+            </div>
+
+            <span class="comment-status" [ngClass]="getStatusClass(comment.status)">
+              {{ getStatusLabel(comment.status) }}
+            </span>
+          </div>
+
+          @if (comment.titleComments) {
+            <h2>{{ comment.titleComments }}</h2>
+          }
+
+          <p class="comment-card__content">{{ comment.commentsContent }}</p>
+
+          <p class="comment-card__resource">Ressource liée : {{ comment.resourceId }}</p>
+
+          @if (comment.status === 'PENDING') {
+            <div class="comment-card__moderation">
+              <label [for]="'reason-' + comment.commentsId">Raison du refus</label>
+
+              <textarea
+                [id]="'reason-' + comment.commentsId"
+                rows="3"
+                placeholder="Obligatoire uniquement si le commentaire est refusé"
+                [value]="getRejectionReason(comment.commentsId)"
+                (input)="setRejectionReason(comment.commentsId, $any($event.target).value)"
+              ></textarea>
+
+              <div class="comment-card__actions">
+                <button
+                  mat-raised-button
+                  type="button"
+                  class="primary-button"
+                  [disabled]="moderationLoadingId() === comment.commentsId"
+                  (click)="approve(comment)"
+                >
+                  Approuver
+                </button>
+
+                <button
+                  mat-stroked-button
+                  type="button"
+                  class="danger-button"
+                  [disabled]="
+                    moderationLoadingId() === comment.commentsId ||
+                    !getRejectionReason(comment.commentsId).trim()
+                  "
+                  (click)="reject(comment)"
+                >
+                  Refuser
+                </button>
+              </div>
+            </div>
+          }
+        </mat-card>
+      }
+    </section>
+  }
+</section>

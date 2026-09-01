@@ -1,0 +1,164 @@
+<section class="resources-list-page" aria-labelledby="resources-title">
+  <header class="resources-hero">
+    <div>
+      <p class="resources-hero__eyebrow">Catalogue</p>
+
+      <h1 id="resources-title">Ressources relationnelles</h1>
+
+      <p>
+        Explore les ressources disponibles pour mieux comprendre, enrichir et accompagner les
+        relations au quotidien.
+      </p>
+    </div>
+
+    <a
+      mat-raised-button
+      [routerLink]="session.isLoggedIn() ? ['/resources/add'] : ['/login']"
+      class="resources-hero__link"
+    >
+      {{ session.isLoggedIn() ? 'Proposer une ressource' : 'Se connecter pour proposer' }}
+    </a>
+  </header>
+
+  <mat-card class="resources-filters" aria-label="Filtres du catalogue">
+    <mat-form-field appearance="outline">
+      <mat-label>Rechercher</mat-label>
+      <input
+        matInput
+        [(ngModel)]="search"
+        placeholder="Titre, description, catégorie, tag..."
+        aria-label="Rechercher une ressource"
+      />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Catégorie</mat-label>
+
+      <mat-select [(ngModel)]="selectedCategoryId" aria-label="Filtrer par catégorie">
+        <mat-option value="ALL">Toutes catégories</mat-option>
+
+        @for (category of categories; track category.categoryId) {
+          <mat-option [value]="category.categoryId">
+            {{ category.name }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Type</mat-label>
+
+      <mat-select [(ngModel)]="selectedType" aria-label="Filtrer par type de ressource">
+        <mat-option value="ALL">Tous les types</mat-option>
+
+        @for (type of typeOptions; track type.value) {
+          <mat-option [value]="type.value">
+            {{ type.label }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Tri</mat-label>
+
+      <mat-select [(ngModel)]="selectedSort" aria-label="Trier les ressources">
+        @for (sort of sortOptions; track sort.value) {
+          <mat-option [value]="sort.value">
+            {{ sort.label }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-stroked-button type="button" class="reset-button" (click)="resetFilters()">
+      Réinitialiser
+    </button>
+  </mat-card>
+
+  @if (loading) {
+    <div class="resources-state">
+      <mat-icon aria-hidden="true">hourglass_empty</mat-icon>
+      <span>Chargement des ressources...</span>
+    </div>
+  }
+
+  @if (!loading && errorMessage) {
+    <div class="resources-state resources-state--error">
+      <mat-icon aria-hidden="true">error</mat-icon>
+      <span>{{ errorMessage }}</span>
+
+      <button mat-stroked-button type="button" (click)="reload()">Réessayer</button>
+    </div>
+  }
+
+  @if (!loading && !errorMessage) {
+    <div class="resources-summary" aria-live="polite">
+      <span>{{ resultCountLabel }}</span>
+
+      @if (search || selectedCategoryId !== 'ALL' || selectedType !== 'ALL') {
+        <button mat-button type="button" (click)="resetFilters()">Effacer les filtres</button>
+      }
+    </div>
+  }
+
+  @if (!loading && !errorMessage && filteredResources.length === 0) {
+    <div class="resources-state">
+      <mat-icon aria-hidden="true">search_off</mat-icon>
+      <span>Aucune ressource ne correspond à ta recherche.</span>
+    </div>
+  }
+
+  @if (!loading && !errorMessage && filteredResources.length > 0) {
+    <section class="resources-grid" aria-label="Résultats du catalogue">
+      @for (resource of filteredResources; track resource.resourceId) {
+        <mat-card
+          class="resource-card"
+          [class.resource-card--inactive]="!resource.resourceIsActive"
+        >
+          <div class="resource-card__top">
+            <span class="resource-card__type">
+              {{ getTypeLabel(resource.resourceType) }}
+            </span>
+
+            <span class="resource-card__status" [ngClass]="getStatusClass(resource.status)">
+              {{ getStatusLabel(resource.status) }}
+            </span>
+          </div>
+
+          <h2>{{ resource.resourceTitle }}</h2>
+
+          <p class="resource-card__category">
+            {{ resource.categoryName || 'Sans catégorie' }}
+          </p>
+
+          <p class="resource-card__description">
+            {{ resource.resourceDescription || 'Aucune description disponible.' }}
+          </p>
+
+          @if (resource.tags.length > 0) {
+            <div class="resource-tags" aria-label="Tags de la ressource">
+              @for (tag of resource.tags; track tag) {
+                <span class="resource-tag">#{{ tag }}</span>
+              }
+            </div>
+          }
+
+          @if (!resource.resourceIsActive) {
+            <p class="resource-card__inactive">Cette ressource est actuellement désactivée.</p>
+          }
+
+          <div class="resource-card__actions">
+            <a
+              mat-raised-button
+              class="resource-detail-button"
+              [routerLink]="['/resources', resource.resourceId]"
+            >
+              Voir le détail
+            </a>
+          </div>
+        </mat-card>
+      }
+    </section>
+  }
+</section>

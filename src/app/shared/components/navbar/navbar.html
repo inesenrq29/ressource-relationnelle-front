@@ -1,0 +1,98 @@
+<mat-toolbar class="navbar">
+  <a routerLink="/" class="navbar-brand">
+    <span class="navbar-brand__text">Ressources Relationnelles</span>
+  </a>
+
+  <nav class="navbar-links" aria-label="Navigation principale">
+    <a
+      mat-button
+      routerLink="/"
+      routerLinkActive="active-link"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      Accueil
+    </a>
+
+    <button
+      mat-button
+      type="button"
+      class="menu-button"
+      aria-label="Ouvrir le menu des ressources"
+      [matMenuTriggerFor]="resourcesMenu"
+    >
+      Ressources
+      <mat-icon>expand_more</mat-icon>
+    </button>
+
+    <a mat-button routerLink="/aide" routerLinkActive="active-link">Aide</a>
+
+    @if (canSeeAdminMenu()) {
+      <button
+        mat-button
+        type="button"
+        class="menu-button admin-menu-button"
+        aria-label="Ouvrir le menu d’administration"
+        [matMenuTriggerFor]="adminMenu"
+      >
+        Administration
+        <mat-icon>expand_more</mat-icon>
+      </button>
+    }
+  </nav>
+
+  <div class="navbar-actions">
+    @if (session.isLoggedIn()) {
+      <button mat-button routerLink="/profile" class="profile-button">
+        <span>Hello {{ session.user()?.pseudo }} !</span>
+      </button>
+      <button mat-stroked-button type="button" (click)="logout()">Déconnexion</button>
+    } @else {
+      <a mat-button routerLink="/login">Connexion</a>
+      <a mat-raised-button routerLink="/register" class="register-button">Inscription</a>
+    }
+  </div>
+</mat-toolbar>
+
+<mat-menu #resourcesMenu="matMenu">
+  <button mat-menu-item routerLink="/resources">
+    <span>Voir le catalogue</span>
+  </button>
+
+  @if (session.isLoggedIn()) {
+    <button mat-menu-item routerLink="/resources/add">
+      <span>Ajouter une ressource</span>
+    </button>
+  }
+</mat-menu>
+
+<mat-menu #adminMenu="matMenu">
+  @if (canManageResources()) {
+    <button mat-menu-item routerLink="/admin/resources">
+      <span>Gestion des ressources</span>
+    </button>
+  }
+
+  @if (canManageResources()) {
+    <button mat-menu-item routerLink="/admin/comments">
+      <span>Modération des commentaires</span>
+    </button>
+  }
+
+  @if (canManageUsers()) {
+    <button mat-menu-item routerLink="/admin/users">
+      <span>Gestion des utilisateurs</span>
+    </button>
+  }
+
+  @if (canManageCategories()) {
+    <button mat-menu-item routerLink="/resources/categories/add">
+      <span>Ajouter une catégorie</span>
+    </button>
+  }
+
+  @if (canSeeStats()) {
+    <button mat-menu-item routerLink="/admin/stats">
+      <span>Statistiques</span>
+    </button>
+  }
+</mat-menu>

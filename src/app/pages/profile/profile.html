@@ -1,0 +1,67 @@
+<section class="profile-page" aria-labelledby="profile-title">
+  <mat-card class="profile-card">
+    <div class="profile-header">
+      <p>Mon espace</p>
+
+      <h1 id="profile-title">Bonjour {{ session.user()?.pseudo }}</h1>
+
+      <span> Retrouve ici ton profil, ta progression et tes ressources sauvegardées. </span>
+    </div>
+
+    <div class="user-info">
+      <div>
+        <strong>Email</strong>
+        <span>{{ session.user()?.email || 'Non renseigné' }}</span>
+      </div>
+
+      <div>
+        <strong>Rôle</strong>
+        <span>{{ session.role() || 'Utilisateur' }}</span>
+      </div>
+    </div>
+
+    @if (loading()) {
+      <p class="state">Chargement de la progression...</p>
+    }
+
+    @if (!loading() && errorMessage()) {
+      <p class="error">{{ errorMessage() }}</p>
+    }
+
+    @if (!loading()) {
+      <div class="progression-grid">
+        <a routerLink="/profile/favorites" class="progression-card-link">
+          <mat-card class="progression-card">
+            <span class="progression-number">{{ progression().favoritesCount }}</span>
+            <strong>Favorites</strong>
+            <p>Voir les ressources ajoutées à tes favoris.</p>
+          </mat-card>
+        </a>
+
+        <a routerLink="/profile/set-aside" class="progression-card-link">
+          <mat-card class="progression-card">
+            <span class="progression-number">{{ progression().setAsideCount }}</span>
+            <strong>Mises de côté</strong>
+            <p>Voir les ressources gardées pour plus tard.</p>
+          </mat-card>
+        </a>
+
+        <a routerLink="/profile/exploited" class="progression-card-link">
+          <mat-card class="progression-card">
+            <span class="progression-number">{{ progression().exploitedCount }}</span>
+            <strong>Exploitées</strong>
+            <p>Voir les ressources que tu as déjà utilisées.</p>
+          </mat-card>
+        </a>
+      </div>
+    }
+
+    <div class="profile-actions">
+      <a mat-raised-button routerLink="/resources" class="primary-button">
+        Explorer les ressources
+      </a>
+
+      <a mat-stroked-button routerLink="/resources/add"> Proposer une ressource </a>
+    </div>
+  </mat-card>
+</section>

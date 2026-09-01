@@ -1,0 +1,197 @@
+<section class="admin-users-page" aria-labelledby="admin-users-title">
+  <header class="admin-users-hero">
+    <div>
+      <p class="admin-users-hero__eyebrow">Back-office</p>
+
+      <h1 id="admin-users-title">Gestion des utilisateurs</h1>
+
+      <p>
+        Désactive ou réactive les comptes utilisateurs. La création de comptes modérateur,
+        administrateur et super-administrateur est réservée aux super-administrateurs.
+      </p>
+    </div>
+
+    <button mat-raised-button type="button" class="primary-button" (click)="loadUsers()">
+      Actualiser
+    </button>
+  </header>
+
+  @if (isSuperAdmin()) {
+    <mat-card class="create-user-card">
+      <div class="section-header">
+        <p>Super-administration</p>
+        <h2>Créer un compte à rôle</h2>
+      </div>
+
+      <form [formGroup]="createForm" (ngSubmit)="createUser()" class="create-user-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Pseudo</mat-label>
+          <input matInput formControlName="pseudo" placeholder="Ex : ModoSarah" />
+
+          @if (pseudo.invalid && pseudo.touched) {
+            <mat-error>Le pseudo doit contenir au moins 3 caractères.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="mail" type="email" placeholder="modo@rr.local" />
+
+          @if (mail.invalid && mail.touched) {
+            <mat-error>Un email valide est obligatoire.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Mot de passe</mat-label>
+          <input matInput formControlName="password" type="password" />
+
+          @if (password.invalid && password.touched) {
+            <mat-error>Le mot de passe doit contenir au moins 8 caractères.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Rôle</mat-label>
+
+          <mat-select formControlName="roleName">
+            @for (role of privilegedRoles; track role.value) {
+              <mat-option [value]="role.value">
+                {{ role.label }}
+              </mat-option>
+            }
+          </mat-select>
+
+          @if (roleName.invalid && roleName.touched) {
+            <mat-error>Le rôle est obligatoire.</mat-error>
+          }
+        </mat-form-field>
+
+        @if (createError()) {
+          <p class="feedback feedback--error">{{ createError() }}</p>
+        }
+
+        @if (createSuccess()) {
+          <p class="feedback feedback--success">{{ createSuccess() }}</p>
+        }
+
+        <div class="create-user-actions">
+          <button
+            mat-raised-button
+            type="submit"
+            class="primary-button"
+            [disabled]="createLoading()"
+          >
+            {{ createLoading() ? 'Création...' : 'Créer le compte' }}
+          </button>
+        </div>
+      </form>
+    </mat-card>
+  }
+
+  <mat-card class="users-card">
+    <div class="users-card__header">
+      <div>
+        <p>Utilisateurs</p>
+        <h2>{{ usersCountLabel() }}</h2>
+      </div>
+    </div>
+
+    @if (loading()) {
+      <p class="state">Chargement des utilisateurs...</p>
+    }
+
+    @if (!loading() && errorMessage()) {
+      <p class="feedback feedback--error">{{ errorMessage() }}</p>
+    }
+
+    @if (!loading() && successMessage()) {
+      <p class="feedback feedback--success">{{ successMessage() }}</p>
+    }
+
+    @if (!loading() && sortedUsers().length === 0) {
+      <p class="state">Aucun utilisateur à afficher.</p>
+    }
+
+    @if (!loading() && sortedUsers().length > 0) {
+      <div class="users-table-wrapper">
+        <table class="users-table">
+          <thead>
+            <tr>
+              <th>Utilisateur</th>
+              <th>Email</th>
+              <th>Rôle</th>
+              <th>Statut</th>
+              <th>Dernière connexion</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (user of sortedUsers(); track user.appUserId) {
+              <tr>
+                <td>
+                  <strong>{{ user.pseudo }}</strong>
+
+                  @if (isCurrentUser(user)) {
+                    <span class="current-user-label">Vous</span>
+                  }
+                </td>
+
+                <td>{{ user.mail }}</td>
+
+                <td>
+                  <span class="role-badge">
+                    {{ getRoleLabel(user.role.roleName) }}
+                  </span>
+                </td>
+
+                <td>
+                  <span class="status-badge" [ngClass]="getStatusClass(user)">
+                    {{ getStatusLabel(user) }}
+                  </span>
+                </td>
+
+                <td>
+                  @if (user.lastConnectionAt) {
+                    {{ user.lastConnectionAt | date: 'dd/MM/yyyy à HH:mm' }}
+                  } @else {
+                    Jamais
+                  }
+                </td>
+
+                <td>
+                  @if (canUpdateStatus(user)) {
+                    @if (user.appUserIsActive) {
+                      <button
+                        mat-stroked-button
+                        type="button"
+                        class="danger-button"
+                        [disabled]="actionLoadingId() === user.appUserId"
+                        (click)="disableUser(user)"
+                      >
+                        Désactiver
+                      </button>
+                    } @else {
+                      <button
+                        mat-raised-button
+                        type="button"
+                        class="primary-button"
+                        [disabled]="actionLoadingId() === user.appUserId"
+                        (click)="enableUser(user)"
+                      >
+                        Réactiver
+                      </button>
+                    }
+                  } @else {
+                    <span class="no-action">Non autorisé</span>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </mat-card>
+</section>

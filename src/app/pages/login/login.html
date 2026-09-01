@@ -1,0 +1,101 @@
+<div class="auth-shell">
+  <section class="auth-visual" aria-label="Présentation de la plateforme">
+    <a routerLink="/" class="brand-badge">Ressource Relationnelle</a>
+    <div class="auth-visual__content">
+      <p class="auth-kicker">Prends soin de toi à travers les autres</p>
+      <h1>Reconnecte-toi à un espace pensé pour la relation et le partage.</h1>
+      <p class="auth-description">
+        Une plateforme conçue pour t’aider à découvrir, conserver et partager des ressources autour
+        de la qualité des liens relationnels et du mieux-être.
+      </p>
+    </div>
+
+    <div class="auth-visual__footer" aria-hidden="true"></div>
+  </section>
+
+  <section class="auth-card" aria-labelledby="login-title">
+    <p class="auth-card__eyebrow">Connexion</p>
+    <h2 id="login-title">Bon retour</h2>
+    <p class="auth-card__subtitle">
+      Connecte-toi pour retrouver tes ressources, tes favoris et ton espace personnel.
+    </p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form" novalidate>
+      <div class="field">
+        <label for="email">Adresse email</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          inputmode="email"
+          autocomplete="email"
+          placeholder="exemple@email.com"
+          [attr.aria-invalid]="email.invalid && email.touched ? 'true' : 'false'"
+          [attr.aria-describedby]="email.touched && email.invalid ? 'email-errors' : null"
+        />
+
+        @if (email.touched && email.invalid) {
+          <div id="email-errors" class="field-messages" aria-live="polite">
+            @if (email.errors?.['required']) {
+              <small class="field-error"> L’adresse email est obligatoire. </small>
+            }
+            @if (email.errors?.['email']) {
+              <small class="field-error"> Le format de l’adresse email est invalide. </small>
+            }
+            @if (email.errors?.['maxlength']) {
+              <small class="field-error">
+                L’adresse email ne doit pas dépasser 254 caractères.
+              </small>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="field">
+        <label for="password">Mot de passe</label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          autocomplete="current-password"
+          placeholder="Minimum 8 caractères"
+          [attr.aria-invalid]="password.invalid && password.touched ? 'true' : 'false'"
+          [attr.aria-describedby]="password.touched && password.invalid ? 'password-errors' : null"
+        />
+
+        @if (password.touched && password.invalid) {
+          <div id="password-errors" class="field-messages" aria-live="polite">
+            @if (password.errors?.['required']) {
+              <small class="field-error"> Le mot de passe est obligatoire. </small>
+            }
+            @if (password.errors?.['minlength']) {
+              <small class="field-error">
+                Le mot de passe doit contenir au moins 8 caractères.
+              </small>
+            }
+            @if (password.errors?.['maxlength']) {
+              <small class="field-error">
+                Le mot de passe ne doit pas dépasser 255 caractères.
+              </small>
+            }
+          </div>
+        }
+      </div>
+
+      @if (errorMessage) {
+        <div class="alert-error" role="alert" aria-live="assertive">
+          {{ errorMessage }}
+        </div>
+      }
+
+      <button class="primary-btn" type="submit" [disabled]="loading">
+        {{ loading ? 'Connexion en cours…' : 'Se connecter' }}
+      </button>
+    </form>
+
+    <p class="auth-switch">
+      Pas encore de compte ?
+      <a routerLink="/register">Créer un compte</a>
+    </p>
+  </section>
+</div>

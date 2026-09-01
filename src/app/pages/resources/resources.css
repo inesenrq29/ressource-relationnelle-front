@@ -1,0 +1,131 @@
+:host {
+  display: block;
+}
+
+.create-resource-page {
+  min-height: calc(100vh - 78px);
+  padding: 2rem;
+}
+
+.create-resource-card {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 2rem;
+  border-radius: 28px !important;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: var(--rr-shadow);
+}
+
+.page-header {
+  margin-bottom: 2rem;
+}
+
+.page-header p {
+  margin: 0 0 0.5rem;
+  color: var(--rr-orange);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.8rem;
+}
+
+.page-header h1 {
+  margin: 0;
+  color: var(--rr-navy);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 400;
+}
+
+.page-header span {
+  display: block;
+  margin-top: 0.8rem;
+  color: rgba(84, 84, 84, 0.9);
+  line-height: 1.6;
+}
+
+.resource-form {
+  display: grid;
+  gap: 1.4rem;
+}
+
+.question {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.question-label {
+  margin: 0;
+  color: var(--rr-navy);
+  font-weight: 800;
+  font-size: 1rem;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.category-help {
+  margin: 0.2rem 0 0;
+  padding: 0.85rem 1rem;
+  border-radius: 16px;
+  background: rgba(2, 48, 71, 0.05);
+  color: rgba(84, 84, 84, 0.88);
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.feedback p {
+  margin: 0;
+  padding: 0.9rem 1rem;
+  border-radius: 16px;
+  font-weight: 700;
+}
+
+.error {
+  background: rgba(217, 65, 65, 0.1);
+  color: var(--rr-danger);
+}
+
+.success {
+  background: rgba(37, 107, 79, 0.12);
+  color: #256b4f;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.actions a,
+.actions button {
+  min-height: 46px;
+  border-radius: 999px !important;
+  font-weight: 800;
+}
+
+.submit-button {
+  background: linear-gradient(135deg, var(--rr-yellow), var(--rr-orange)) !important;
+  color: var(--rr-navy) !important;
+}
+
+@media (max-width: 700px) {
+  .create-resource-page {
+    padding: 1rem;
+  }
+
+  .create-resource-card {
+    padding: 1.2rem;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .actions a,
+  .actions button {
+    width: 100%;
+  }
+}

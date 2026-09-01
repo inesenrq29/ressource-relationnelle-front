@@ -1,0 +1,126 @@
+<section class="admin-resources-page">
+  <mat-card class="admin-card">
+    <div class="page-header">
+      <p>Back-office</p>
+      <h1>Gestion des ressources</h1>
+      <span> Valide, publie ou archive les ressources proposées par les utilisateurs. </span>
+    </div>
+
+    <div class="top-actions">
+      <a mat-stroked-button routerLink="/resources/add"> Ajouter une ressource </a>
+
+      <a mat-stroked-button routerLink="/resources/categories/add"> Ajouter une catégorie </a>
+    </div>
+
+    <div class="filters">
+      <mat-form-field appearance="outline">
+        <mat-label>Recherche</mat-label>
+        <input matInput [(ngModel)]="search" placeholder="Titre, description, catégorie..." />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Statut</mat-label>
+        <mat-select [(ngModel)]="selectedStatus">
+          @for (status of statuses; track status) {
+            <mat-option [value]="status.value">
+              {{ status.label }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    @if (errorMessage || successMessage) {
+      <div class="feedback">
+        @if (errorMessage) {
+          <p class="error">{{ errorMessage }}</p>
+        }
+        @if (successMessage) {
+          <p class="success">{{ successMessage }}</p>
+        }
+      </div>
+    }
+
+    @if (loading) {
+      <p class="state">Chargement des ressources...</p>
+    }
+
+    @if (!loading && filteredResources.length === 0) {
+      <p class="state">Aucune ressource trouvée.</p>
+    }
+
+    @if (!loading && filteredResources.length > 0) {
+      <div class="resources-list">
+        @for (resource of filteredResources; track resource) {
+          <mat-card class="resource-card">
+            <div class="resource-top">
+              <span class="status">
+                {{ getStatusLabel(resource.status) }}
+              </span>
+            </div>
+            <h2>{{ resource.resourceTitle }}</h2>
+            <p class="category">
+              {{ resource.categoryName || 'Sans catégorie' }}
+            </p>
+            <p class="description">
+              {{ resource.resourceDescription || 'Aucune description.' }}
+            </p>
+            <div class="actions">
+              <a mat-button [routerLink]="['/resources', resource.resourceId]"> Voir </a>
+              @if (resource.status === 'DRAFT') {
+                <button
+                  mat-stroked-button
+                  type="button"
+                  [disabled]="actionLoading"
+                  (click)="submitForValidation(resource)"
+                >
+                  Soumettre
+                </button>
+              }
+              @if (resource.status === 'PENDING_VALIDATION') {
+                <button
+                  mat-raised-button
+                  class="primary-button"
+                  type="button"
+                  [disabled]="actionLoading"
+                  (click)="publish(resource)"
+                >
+                  Publier
+                </button>
+              }
+              @if (resource.status === 'PUBLISHED') {
+                <button
+                  mat-stroked-button
+                  type="button"
+                  [disabled]="actionLoading"
+                  (click)="restrict(resource)"
+                >
+                  Restreindre
+                </button>
+              }
+              @if (resource.status === 'PUBLISHED' || resource.status === 'RESTRICTED') {
+                <button
+                  mat-stroked-button
+                  type="button"
+                  [disabled]="actionLoading"
+                  (click)="archive(resource)"
+                >
+                  Archiver
+                </button>
+              }
+              <button
+                mat-button
+                type="button"
+                class="danger-button"
+                [disabled]="actionLoading"
+                (click)="delete(resource)"
+              >
+                Supprimer
+              </button>
+            </div>
+          </mat-card>
+        }
+      </div>
+    }
+  </mat-card>
+</section>

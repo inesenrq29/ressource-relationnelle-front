@@ -1,0 +1,31 @@
+@if (isVisible) {
+  <div class="cookie-banner">
+    <div class="cookie-banner__content">
+      <div>
+        <h2>Gestion des cookies</h2>
+        <p>
+          Ce site utilise des cookies pour améliorer ton expérience de navigation. Tu peux accepter
+          ou refuser leur utilisation.
+        </p>
+      </div>
+      <div class="cookie-banner__actions">
+        <button
+          mat-stroked-button
+          type="button"
+          class="cookie-banner__secondary"
+          (click)="refuseCookies()"
+        >
+          Refuser
+        </button>
+        <button
+          mat-raised-button
+          type="button"
+          class="cookie-banner__primary"
+          (click)="acceptCookies()"
+        >
+          Accepter
+        </button>
+      </div>
+    </div>
+  </div>
+}

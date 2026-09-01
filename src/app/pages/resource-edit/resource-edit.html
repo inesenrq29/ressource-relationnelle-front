@@ -1,0 +1,121 @@
+<section class="edit-resource-page">
+  <mat-card class="edit-resource-card">
+    <div class="page-header">
+      <p>Modification</p>
+      <h1>Modifier la ressource</h1>
+      <span>
+        Mets à jour les informations ci-dessous. Les changements seront sauvegardés immédiatement.
+      </span>
+    </div>
+
+    @if (loading()) {
+      <p class="state">Chargement de la ressource...</p>
+    }
+
+    @if (!loading() && errorMessage() && !successMessage()) {
+      <p class="error-state">{{ errorMessage() }}</p>
+    }
+
+    @if (!loading()) {
+      <form [formGroup]="form" (ngSubmit)="submit()" class="resource-form">
+        <div class="question">
+          <p class="question-label">1. Dans quelle catégorie ?</p>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Catégorie</mat-label>
+            <mat-select formControlName="categoryId">
+              @for (category of categories(); track category.categoryId) {
+                <mat-option [value]="category.categoryId">
+                  {{ category.name }}
+                </mat-option>
+              }
+            </mat-select>
+
+            @if (categoryId.invalid && categoryId.touched) {
+              <mat-error>La catégorie est obligatoire.</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="question">
+          <p class="question-label">2. Quel type de ressource ?</p>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Type</mat-label>
+            <mat-select formControlName="resourceType">
+              @for (type of resourceTypes; track type.value) {
+                <mat-option [value]="type.value">
+                  {{ type.label }}
+                </mat-option>
+              }
+            </mat-select>
+
+            @if (resourceType.invalid && resourceType.touched) {
+              <mat-error>Le type est obligatoire.</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="question">
+          <p class="question-label">3. Quel titre ?</p>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Titre</mat-label>
+            <input
+              matInput
+              formControlName="resourceTitle"
+              placeholder="Ex : Article sur le bien-être"
+            />
+
+            @if (resourceTitle.invalid && resourceTitle.touched) {
+              <mat-error>Le titre est obligatoire.</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="question">
+          <p class="question-label">4. Description et tags</p>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Description</mat-label>
+            <textarea
+              matInput
+              rows="4"
+              formControlName="resourceDescription"
+              placeholder="Décris rapidement la ressource."
+            ></textarea>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Tags</mat-label>
+            <input
+              matInput
+              formControlName="tagsRaw"
+              placeholder="bien-être, communication, famille"
+            />
+            <mat-hint>Sépare les tags par des virgules.</mat-hint>
+          </mat-form-field>
+        </div>
+
+        @if (errorMessage() || successMessage()) {
+          <div class="feedback">
+            @if (errorMessage()) {
+              <p class="error">{{ errorMessage() }}</p>
+            }
+            @if (successMessage()) {
+              <p class="success">{{ successMessage() }}</p>
+            }
+          </div>
+        }
+
+        <div class="actions">
+          <a mat-stroked-button [routerLink]="['/resources', resourceId]"> Annuler </a>
+
+          <button mat-raised-button class="submit-button" type="submit" [disabled]="saving()">
+            {{ saving() ? 'Sauvegarde...' : 'Enregistrer les modifications' }}
+          </button>
+        </div>
+      </form>
+    }
+  </mat-card>
+</section>
