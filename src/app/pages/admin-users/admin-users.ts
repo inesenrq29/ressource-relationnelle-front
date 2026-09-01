@@ -241,9 +241,7 @@ export class AdminUsersComponent implements OnInit {
           );
 
           this.successMessage.set(
-            status === 'ACTIVE'
-              ? 'Compte réactivé avec succès.'
-              : 'Compte désactivé avec succès.',
+            status === 'ACTIVE' ? 'Compte réactivé avec succès.' : 'Compte désactivé avec succès.',
           );
         },
         error: (error) => {

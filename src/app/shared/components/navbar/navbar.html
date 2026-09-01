@@ -26,33 +26,30 @@
 
     <a mat-button routerLink="/aide" routerLinkActive="active-link">Aide</a>
 
-    <button
-      mat-button
-      type="button"
-      class="menu-button admin-menu-button"
-      aria-label="Ouvrir le menu d’administration"
-      *ngIf="canSeeAdminMenu()"
-      [matMenuTriggerFor]="adminMenu"
-    >
-      Administration
-      <mat-icon>expand_more</mat-icon>
-    </button>
+    @if (canSeeAdminMenu()) {
+      <button
+        mat-button
+        type="button"
+        class="menu-button admin-menu-button"
+        aria-label="Ouvrir le menu d’administration"
+        [matMenuTriggerFor]="adminMenu"
+      >
+        Administration
+        <mat-icon>expand_more</mat-icon>
+      </button>
+    }
   </nav>
 
   <div class="navbar-actions">
-    <ng-container *ngIf="session.isLoggedIn(); else guestActions">
+    @if (session.isLoggedIn()) {
       <button mat-button routerLink="/profile" class="profile-button">
         <span>Hello {{ session.user()?.pseudo }} !</span>
       </button>
-
       <button mat-stroked-button type="button" (click)="logout()">Déconnexion</button>
-    </ng-container>
-
-    <ng-template #guestActions>
+    } @else {
       <a mat-button routerLink="/login">Connexion</a>
-
       <a mat-raised-button routerLink="/register" class="register-button">Inscription</a>
-    </ng-template>
+    }
   </div>
 </mat-toolbar>
 
@@ -61,29 +58,41 @@
     <span>Voir le catalogue</span>
   </button>
 
-  <button mat-menu-item routerLink="/resources/add" *ngIf="session.isLoggedIn()">
-    <span>Ajouter une ressource</span>
-  </button>
+  @if (session.isLoggedIn()) {
+    <button mat-menu-item routerLink="/resources/add">
+      <span>Ajouter une ressource</span>
+    </button>
+  }
 </mat-menu>
 
 <mat-menu #adminMenu="matMenu">
-  <button mat-menu-item routerLink="/admin/resources" *ngIf="canManageResources()">
-    <span>Gestion des ressources</span>
-  </button>
+  @if (canManageResources()) {
+    <button mat-menu-item routerLink="/admin/resources">
+      <span>Gestion des ressources</span>
+    </button>
+  }
 
-  <button mat-menu-item routerLink="/admin/comments" *ngIf="canManageResources()">
-    <span>Modération des commentaires</span>
-  </button>
+  @if (canManageResources()) {
+    <button mat-menu-item routerLink="/admin/comments">
+      <span>Modération des commentaires</span>
+    </button>
+  }
 
-  <button mat-menu-item routerLink="/admin/users" *ngIf="canManageUsers()">
-    <span>Gestion des utilisateurs</span>
-  </button>
+  @if (canManageUsers()) {
+    <button mat-menu-item routerLink="/admin/users">
+      <span>Gestion des utilisateurs</span>
+    </button>
+  }
 
-  <button mat-menu-item routerLink="/resources/categories/add" *ngIf="canManageCategories()">
-    <span>Ajouter une catégorie</span>
-  </button>
+  @if (canManageCategories()) {
+    <button mat-menu-item routerLink="/resources/categories/add">
+      <span>Ajouter une catégorie</span>
+    </button>
+  }
 
-  <button mat-menu-item routerLink="/admin/stats" *ngIf="canSeeStats()">
-    <span>Statistiques</span>
-  </button>
+  @if (canSeeStats()) {
+    <button mat-menu-item routerLink="/admin/stats">
+      <span>Statistiques</span>
+    </button>
+  }
 </mat-menu>

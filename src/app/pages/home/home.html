@@ -6,8 +6,8 @@
       <h1>Des ressources qui préservent les relations, le partage et le bien-être</h1>
 
       <p class="hero__description">
-        Explore des contenus utiles, humains et accessibles pour mieux te comprendre, comprendre
-        tes relations et découvrir de nouvelles pratiques.
+        Explore des contenus utiles, humains et accessibles pour mieux te comprendre, comprendre tes
+        relations et découvrir de nouvelles pratiques.
       </p>
 
       <div class="hero__actions">
@@ -15,9 +15,7 @@
           Découvrir les ressources
         </a>
 
-        <a mat-stroked-button routerLink="/aide" class="btn-secondary">
-          En savoir plus
-        </a>
+        <a mat-stroked-button routerLink="/aide" class="btn-secondary"> En savoir plus </a>
       </div>
 
       <ul class="hero__highlights" aria-label="Points clés">
@@ -60,9 +58,11 @@
       <p class="content-strip__title">Formats de contenu</p>
 
       <div class="content-strip__track" role="list">
-        <span class="content-pill" role="listitem" *ngFor="let contentType of contentTypes">
-          {{ contentType }}
-        </span>
+        @for (contentType of contentTypes; track contentType) {
+          <span class="content-pill" role="listitem">
+            {{ contentType }}
+          </span>
+        }
       </div>
     </div>
   </section>
@@ -78,28 +78,26 @@
     </div>
 
     <div class="resource-grid">
-      <mat-card class="resource-card" *ngFor="let resource of resourceTypes; let i = index">
-        <div class="resource-card__top">
-          <div class="resource-card__icon" aria-hidden="true">
-            <mat-icon>{{ resource.icon }}</mat-icon>
+      @for (resource of resourceTypes; track resource; let i = $index) {
+        <mat-card class="resource-card">
+          <div class="resource-card__top">
+            <div class="resource-card__icon" aria-hidden="true">
+              <mat-icon>{{ resource.icon }}</mat-icon>
+            </div>
+            <span class="resource-card__tag">{{ resource.tag }}</span>
           </div>
-
-          <span class="resource-card__tag">{{ resource.tag }}</span>
-        </div>
-
-        <div class="resource-card__body">
-          <h3>{{ resource.title }}</h3>
-          <p>{{ resource.description }}</p>
-
-          <ul class="resource-card__list">
-            <li *ngFor="let point of resource.points">{{ point }}</li>
-          </ul>
-        </div>
-
-        <a mat-button routerLink="/resources" class="resource-card__link">
-          Accéder
-        </a>
-      </mat-card>
+          <div class="resource-card__body">
+            <h3>{{ resource.title }}</h3>
+            <p>{{ resource.description }}</p>
+            <ul class="resource-card__list">
+              @for (point of resource.points; track point) {
+                <li>{{ point }}</li>
+              }
+            </ul>
+          </div>
+          <a mat-button routerLink="/resources" class="resource-card__link"> Accéder </a>
+        </mat-card>
+      }
     </div>
   </section>
 </main>

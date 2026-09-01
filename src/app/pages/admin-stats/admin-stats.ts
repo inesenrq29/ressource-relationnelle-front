@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';
@@ -24,7 +23,6 @@ interface ResourceTypeOption {
   selector: 'app-admin-stats',
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     MatButtonModule,
     MatCardModule,
@@ -64,11 +62,12 @@ export class AdminStatsComponent implements OnInit {
     { value: 'EXERCISE_WORKSHOP', label: 'Exercice / Atelier' },
   ];
 
-  readonly resourceTypeLabels: Partial<Record<string, string>> =
-    this.resourceTypeOptions.reduce<Partial<Record<string, string>>>((acc, option) => {
-      acc[option.value] = option.label;
-      return acc;
-    }, {});
+  readonly resourceTypeLabels: Partial<Record<string, string>> = this.resourceTypeOptions.reduce<
+    Partial<Record<string, string>>
+  >((acc, option) => {
+    acc[option.value] = option.label;
+    return acc;
+  }, {});
 
   readonly hasActiveFilters = computed(
     () =>

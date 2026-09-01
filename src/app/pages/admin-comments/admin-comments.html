@@ -58,96 +58,94 @@
   </mat-card>
 
   @if (loading()) {
-  <div class="admin-comments-state">Chargement des commentaires...</div>
+    <div class="admin-comments-state">Chargement des commentaires...</div>
   }
 
   @if (!loading() && errorMessage()) {
-  <div class="admin-comments-state admin-comments-state--error">
-    {{ errorMessage() }}
-  </div>
+    <div class="admin-comments-state admin-comments-state--error">
+      {{ errorMessage() }}
+    </div>
   }
 
   @if (!loading() && successMessage()) {
-  <div class="admin-comments-state admin-comments-state--success">
-    {{ successMessage() }}
-  </div>
+    <div class="admin-comments-state admin-comments-state--success">
+      {{ successMessage() }}
+    </div>
   }
 
   @if (!loading() && filteredComments().length === 0) {
-  <mat-card class="empty-state">
-    <mat-icon aria-hidden="true">forum</mat-icon>
+    <mat-card class="empty-state">
+      <mat-icon aria-hidden="true">forum</mat-icon>
 
-    <h2>Aucun commentaire à afficher</h2>
+      <h2>Aucun commentaire à afficher</h2>
 
-    <p>Il n’y a aucun commentaire correspondant au filtre sélectionné.</p>
-  </mat-card>
+      <p>Il n’y a aucun commentaire correspondant au filtre sélectionné.</p>
+    </mat-card>
   }
 
   @if (!loading() && filteredComments().length > 0) {
-  <section class="comments-grid" aria-label="Liste des commentaires à modérer">
-    @for (comment of filteredComments(); track comment.commentsId) {
-    <mat-card class="comment-card">
-      <div class="comment-card__top">
-        <div>
-          <strong>{{ comment.author }}</strong>
-          <span>{{ comment.publicationDate | date: 'dd/MM/yyyy à HH:mm' }}</span>
-        </div>
+    <section class="comments-grid" aria-label="Liste des commentaires à modérer">
+      @for (comment of filteredComments(); track comment.commentsId) {
+        <mat-card class="comment-card">
+          <div class="comment-card__top">
+            <div>
+              <strong>{{ comment.author }}</strong>
+              <span>{{ comment.publicationDate | date: 'dd/MM/yyyy à HH:mm' }}</span>
+            </div>
 
-        <span class="comment-status" [ngClass]="getStatusClass(comment.status)">
+            <span class="comment-status" [ngClass]="getStatusClass(comment.status)">
               {{ getStatusLabel(comment.status) }}
             </span>
-      </div>
+          </div>
 
-      @if (comment.titleComments) {
-      <h2>{{ comment.titleComments }}</h2>
-      }
+          @if (comment.titleComments) {
+            <h2>{{ comment.titleComments }}</h2>
+          }
 
-      <p class="comment-card__content">{{ comment.commentsContent }}</p>
+          <p class="comment-card__content">{{ comment.commentsContent }}</p>
 
-      <p class="comment-card__resource">
-        Ressource liée : {{ comment.resourceId }}
-      </p>
+          <p class="comment-card__resource">Ressource liée : {{ comment.resourceId }}</p>
 
-      @if (comment.status === 'PENDING') {
-      <div class="comment-card__moderation">
-        <label [for]="'reason-' + comment.commentsId">Raison du refus</label>
+          @if (comment.status === 'PENDING') {
+            <div class="comment-card__moderation">
+              <label [for]="'reason-' + comment.commentsId">Raison du refus</label>
 
-        <textarea
-          [id]="'reason-' + comment.commentsId"
-          rows="3"
-          placeholder="Obligatoire uniquement si le commentaire est refusé"
-          [value]="getRejectionReason(comment.commentsId)"
-          (input)="setRejectionReason(comment.commentsId, $any($event.target).value)"
-        ></textarea>
+              <textarea
+                [id]="'reason-' + comment.commentsId"
+                rows="3"
+                placeholder="Obligatoire uniquement si le commentaire est refusé"
+                [value]="getRejectionReason(comment.commentsId)"
+                (input)="setRejectionReason(comment.commentsId, $any($event.target).value)"
+              ></textarea>
 
-        <div class="comment-card__actions">
-          <button
-            mat-raised-button
-            type="button"
-            class="primary-button"
-            [disabled]="moderationLoadingId() === comment.commentsId"
-            (click)="approve(comment)"
-          >
-            Approuver
-          </button>
+              <div class="comment-card__actions">
+                <button
+                  mat-raised-button
+                  type="button"
+                  class="primary-button"
+                  [disabled]="moderationLoadingId() === comment.commentsId"
+                  (click)="approve(comment)"
+                >
+                  Approuver
+                </button>
 
-          <button
-            mat-stroked-button
-            type="button"
-            class="danger-button"
-            [disabled]="
+                <button
+                  mat-stroked-button
+                  type="button"
+                  class="danger-button"
+                  [disabled]="
                     moderationLoadingId() === comment.commentsId ||
                     !getRejectionReason(comment.commentsId).trim()
                   "
-            (click)="reject(comment)"
-          >
-            Refuser
-          </button>
-        </div>
-      </div>
+                  (click)="reject(comment)"
+                >
+                  Refuser
+                </button>
+              </div>
+            </div>
+          }
+        </mat-card>
       }
-    </mat-card>
-    }
-  </section>
+    </section>
   }
 </section>

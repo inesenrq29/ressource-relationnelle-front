@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -9,11 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 
-import {
-  ResourceDto,
-  ResourceService,
-  ResourceStatus,
-} from '../../core/services/resource.service';
+import { ResourceDto, ResourceService, ResourceStatus } from '../../core/services/resource.service';
 
 type StatusFilter = ResourceStatus | 'ALL';
 
@@ -21,7 +16,6 @@ type StatusFilter = ResourceStatus | 'ALL';
   selector: 'app-admin-resources',
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     RouterLink,
     MatButtonModule,
@@ -71,8 +65,7 @@ export class AdminResourcesComponent implements OnInit {
         resource.categoryName?.toLowerCase().includes(searchValue);
 
       const matchesStatus =
-        this.selectedStatus === 'ALL' ||
-        resource.status === this.selectedStatus;
+        this.selectedStatus === 'ALL' || resource.status === this.selectedStatus;
 
       return matchesSearch && matchesStatus;
     });
@@ -133,9 +126,7 @@ export class AdminResourcesComponent implements OnInit {
   }
 
   delete(resource: ResourceDto): void {
-    const confirmed = confirm(
-      `Supprimer la ressource "${resource.resourceTitle}" ?`,
-    );
+    const confirmed = confirm(`Supprimer la ressource "${resource.resourceTitle}" ?`);
 
     if (!confirmed) {
       return;
@@ -154,9 +145,7 @@ export class AdminResourcesComponent implements OnInit {
       )
       .subscribe({
         next: () => {
-          this.resources = this.resources.filter(
-            (item) => item.resourceId !== resource.resourceId,
-          );
+          this.resources = this.resources.filter((item) => item.resourceId !== resource.resourceId);
           this.successMessage = 'Ressource supprimée.';
         },
         error: () => {
