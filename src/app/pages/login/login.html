@@ -34,22 +34,21 @@
           [attr.aria-describedby]="email.touched && email.invalid ? 'email-errors' : null"
         />
 
-        <div
-          id="email-errors"
-          class="field-messages"
-          *ngIf="email.touched && email.invalid"
-          aria-live="polite"
-        >
-          <small class="field-error" *ngIf="email.errors?.['required']">
-            L’adresse email est obligatoire.
-          </small>
-          <small class="field-error" *ngIf="email.errors?.['email']">
-            Le format de l’adresse email est invalide.
-          </small>
-          <small class="field-error" *ngIf="email.errors?.['maxlength']">
-            L’adresse email ne doit pas dépasser 254 caractères.
-          </small>
-        </div>
+        @if (email.touched && email.invalid) {
+          <div id="email-errors" class="field-messages" aria-live="polite">
+            @if (email.errors?.['required']) {
+              <small class="field-error"> L’adresse email est obligatoire. </small>
+            }
+            @if (email.errors?.['email']) {
+              <small class="field-error"> Le format de l’adresse email est invalide. </small>
+            }
+            @if (email.errors?.['maxlength']) {
+              <small class="field-error">
+                L’adresse email ne doit pas dépasser 254 caractères.
+              </small>
+            }
+          </div>
+        }
       </div>
 
       <div class="field">
@@ -64,27 +63,30 @@
           [attr.aria-describedby]="password.touched && password.invalid ? 'password-errors' : null"
         />
 
-        <div
-          id="password-errors"
-          class="field-messages"
-          *ngIf="password.touched && password.invalid"
-          aria-live="polite"
-        >
-          <small class="field-error" *ngIf="password.errors?.['required']">
-            Le mot de passe est obligatoire.
-          </small>
-          <small class="field-error" *ngIf="password.errors?.['minlength']">
-            Le mot de passe doit contenir au moins 8 caractères.
-          </small>
-          <small class="field-error" *ngIf="password.errors?.['maxlength']">
-            Le mot de passe ne doit pas dépasser 255 caractères.
-          </small>
-        </div>
+        @if (password.touched && password.invalid) {
+          <div id="password-errors" class="field-messages" aria-live="polite">
+            @if (password.errors?.['required']) {
+              <small class="field-error"> Le mot de passe est obligatoire. </small>
+            }
+            @if (password.errors?.['minlength']) {
+              <small class="field-error">
+                Le mot de passe doit contenir au moins 8 caractères.
+              </small>
+            }
+            @if (password.errors?.['maxlength']) {
+              <small class="field-error">
+                Le mot de passe ne doit pas dépasser 255 caractères.
+              </small>
+            }
+          </div>
+        }
       </div>
 
-      <div class="alert-error" *ngIf="errorMessage" role="alert" aria-live="assertive">
-        {{ errorMessage }}
-      </div>
+      @if (errorMessage) {
+        <div class="alert-error" role="alert" aria-live="assertive">
+          {{ errorMessage }}
+        </div>
+      }
 
       <button class="primary-btn" type="submit" [disabled]="loading">
         {{ loading ? 'Connexion en cours…' : 'Se connecter' }}

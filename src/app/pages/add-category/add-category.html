@@ -10,13 +10,21 @@
       <mat-form-field appearance="outline">
         <mat-label>Nom de la catégorie</mat-label>
         <input matInput formControlName="name" placeholder="Ex : Communication" />
-        <mat-error *ngIf="name.invalid && name.touched"> Le nom est requis. </mat-error>
+        @if (name.invalid && name.touched) {
+          <mat-error> Le nom est requis. </mat-error>
+        }
       </mat-form-field>
 
-      <div class="category-feedback" *ngIf="errorMessage || successMessage">
-        <p class="category-feedback__error" *ngIf="errorMessage">{{ errorMessage }}</p>
-        <p class="category-feedback__success" *ngIf="successMessage">{{ successMessage }}</p>
-      </div>
+      @if (errorMessage || successMessage) {
+        <div class="category-feedback">
+          @if (errorMessage) {
+            <p class="category-feedback__error">{{ errorMessage }}</p>
+          }
+          @if (successMessage) {
+            <p class="category-feedback__success">{{ successMessage }}</p>
+          }
+        </div>
+      }
 
       <button mat-raised-button class="category-submit-btn" type="submit" [disabled]="loading">
         {{ loading ? 'Ajout en cours...' : 'Ajouter la catégorie' }}

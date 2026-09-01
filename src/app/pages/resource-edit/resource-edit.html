@@ -19,7 +19,7 @@
     @if (!loading()) {
       <form [formGroup]="form" (ngSubmit)="submit()" class="resource-form">
         <div class="question">
-          <label>1. Dans quelle catégorie ?</label>
+          <p class="question-label">1. Dans quelle catégorie ?</p>
 
           <mat-form-field appearance="outline">
             <mat-label>Catégorie</mat-label>
@@ -38,7 +38,7 @@
         </div>
 
         <div class="question">
-          <label>2. Quel type de ressource ?</label>
+          <p class="question-label">2. Quel type de ressource ?</p>
 
           <mat-form-field appearance="outline">
             <mat-label>Type</mat-label>
@@ -57,7 +57,7 @@
         </div>
 
         <div class="question">
-          <label>3. Quel titre ?</label>
+          <p class="question-label">3. Quel titre ?</p>
 
           <mat-form-field appearance="outline">
             <mat-label>Titre</mat-label>
@@ -74,7 +74,7 @@
         </div>
 
         <div class="question">
-          <label>4. Description et tags</label>
+          <p class="question-label">4. Description et tags</p>
 
           <mat-form-field appearance="outline">
             <mat-label>Description</mat-label>
