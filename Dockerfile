@@ -6,7 +6,8 @@ COPY package*.json ./
 RUN npm ci
 
 COPY . .
-RUN npm run build
+ARG BUILD_CONFIGURATION=production
+RUN npm run build -- --configuration=${BUILD_CONFIGURATION}
 
 # ---- Serve with Nginx ----
 FROM nginx:alpine
@@ -18,3 +19,4 @@ COPY --from=build /app/dist/ressource-relationnelle/browser /usr/share/nginx/htm
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
