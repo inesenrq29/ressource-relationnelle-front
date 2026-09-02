@@ -4,6 +4,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { switchMap, tap } from 'rxjs';
+import { CsrfService } from '../../../core/services/csrf.service';
 
 import { AuthService } from '../../../core/services/auth';
 import { SessionService } from '../../../core/services/session.service';
@@ -24,7 +26,7 @@ import { SessionService } from '../../../core/services/session.service';
 })
 export class Navbar {
   protected readonly session = inject(SessionService);
-
+  private readonly csrfService = inject(CsrfService);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
@@ -60,14 +62,22 @@ export class Navbar {
   }
 
   logout(): void {
-    this.authService.logout().subscribe({
-      next: () => {
-        this.router.navigateByUrl('/');
-      },
-      error: () => {
-        this.authService.clearSession();
-        this.router.navigateByUrl('/');
-      },
-    });
+    this.authService
+      .logout()
+      .pipe(
+        tap(() => this.authService.clearSession()),
+
+        switchMap(() => this.csrfService.initialize()),
+      )
+      .subscribe({
+        next: () => {
+          this.router.navigateByUrl('/');
+        },
+        error: (error) => {
+          this.authService.clearSession();
+          this.router.navigateByUrl('/');
+          console.error('Erreur lors de la déconnexion', error);
+        },
+      });
   }
 }
