@@ -18,7 +18,7 @@ export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly sessionService = inject(SessionService);
 
-private readonly apiUrl = `${environment.apiUrl}/auth`;
+  private readonly apiUrl = `${environment.apiUrl}/auth`;
 
   register(payload: RegisterRequest): Observable<AuthResponse> {
     return this.http
