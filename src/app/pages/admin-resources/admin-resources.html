@@ -15,7 +15,12 @@
     <div class="filters">
       <mat-form-field appearance="outline">
         <mat-label>Recherche</mat-label>
-        <input matInput [(ngModel)]="search" placeholder="Titre, description, catégorie..." />
+        <input
+          id="search-input"
+          matInput
+          [(ngModel)]="search"
+          placeholder="Titre, description, catégorie..."
+        />
       </mat-form-field>
 
       <mat-form-field appearance="outline">
