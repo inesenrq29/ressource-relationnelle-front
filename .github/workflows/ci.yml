@@ -22,7 +22,7 @@ jobs:
     steps:
       # récupération du dépôt front
       - name: Retrieve repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           # historique complet nécessaire à Sonar
           fetch-depth: 0
