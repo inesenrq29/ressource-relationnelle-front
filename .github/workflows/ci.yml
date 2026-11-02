@@ -57,7 +57,7 @@ jobs:
           github.actor != 'dependabot[bot]'
           && (github.event_name == 'pull_request'
           || github.ref == 'refs/heads/main')
-        uses: SonarSource/sonarqube-scan-action@7006c4492b2e0ee0f816d36501671557c97f5995
+        uses: SonarSource/sonarqube-scan-action@4d1dc0c91ee400dcf8a6dddf2f705ac36542e304
         with:
           projectBaseDir: .
         env:
